@@ -1,9 +1,25 @@
-use super::{random_valid_points_finder, Surface, X, Y};
+use super::{
+    random_valid_points_finder, AreaStartingPosition, BuilderChain, CellularAutomataBuilder,
+    CullUnreachable, Surface, VoronoiSpawner, X, Y,
+};
 use bracket_lib::{
     prelude::{a_star_search, Algorithm2D},
     random::RandomNumberGenerator,
     terminal::Point,
 };
+
+pub fn forest_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
+    let mut builder = BuilderChain::new(depth, width, height, "The Deep Dark Forest");
+    builder
+        .start_with(CellularAutomataBuilder::new())
+        .with(AreaStartingPosition::new((X::Center, Y::Center)))
+        .with(CullUnreachable::new())
+        .with(AreaStartingPosition::new((X::Left, Y::Center)))
+        .with(VoronoiSpawner::new())
+        .with(ForestRoad::new());
+
+    builder
+}
 
 pub struct ForestRoad {}
 
@@ -33,14 +49,21 @@ impl super::MetaMapBuilder for ForestRoad {
         data.take_snapshot();
 
         let mut rng = RandomNumberGenerator::new();
-        let stream_idx = path.steps[path.steps.len() * 4 / 5];
 
-        let y = match rng.range(0, 2) {
-            0 => Y::Top,
-            _ => Y::Bottom,
+        let stream_idx = if path.steps.len() > 0 {
+            path.steps[path.steps.len() * 4 / 5]
+        } else {
+            random_valid_points_finder(&X::Right, &Y::Center, data)
         };
 
-        let stair = random_valid_points_finder(&X::Right, &y, data);
+        let stair = random_valid_points_finder(
+            &X::Right,
+            &match rng.range(0, 2) {
+                0 => Y::Top,
+                _ => Y::Bottom,
+            },
+            data,
+        );
 
         let stream = a_star_search(stair, stream_idx, &data.map);
 

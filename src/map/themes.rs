@@ -5,6 +5,7 @@ use super::{super::colors::*, tiles::Surface, Map};
 
 pub fn get_tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
     let (glyph, mut fg, theme_bg) = match map.depth {
+        2 => get_cavern_glyph(idx, map),
         1 => get_forest_glyph(idx, map),
         _ => get_default_glyph(idx, map),
     };
@@ -36,6 +37,8 @@ pub fn get_default_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         Surface::WoodFloor => ('.', c(BROWN5)),
         Surface::Gravel => ('~', c(GRAY2)),
         Surface::Path => ('░', c(GRAY3)),
+        Surface::Stalactite => ('▼', c(GRAY6)),
+        Surface::Stalagmite => ('▲', c(GRAY6)),
     };
 
     (to_cp437(glyph), fg, c(BLACK))
@@ -52,6 +55,25 @@ pub fn get_forest_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         Surface::ShallowWater => ('~', c(SHALLOWWATERS5)),
         Surface::Gravel => ('~', c(GRAY2)),
         _ => ('"', c(GREEN5)),
+    };
+
+    (to_cp437(glyph), fg, c(BLACK))
+}
+
+pub fn get_cavern_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
+    let (glyph, fg) = match map.tiles[idx].surface {
+        Surface::Wall => ('▒', c(GRAY6)),
+        Surface::Bridge => ('.', c(BROWN1)),
+        Surface::Road => ('≡', c(GRAY5)),
+        Surface::Grass => ('"', c(GREEN5)),
+        Surface::DownStairs => ('>', c(SHALLOWWATERS1)),
+        Surface::UpStairs => ('<', c(SHALLOWWATERS1)),
+        Surface::DeepWater => ('▓', c(DEEPSEA5)),
+        Surface::ShallowWater => ('░', c(SHALLOWWATERS4)),
+        Surface::Gravel => (';', c(GRAY3)),
+        Surface::Stalactite => ('▼', c(GRAY6)),
+        Surface::Stalagmite => ('▲', c(GRAY6)),
+        _ => ('░', c(GRAY1)),
     };
 
     (to_cp437(glyph), fg, c(BLACK))

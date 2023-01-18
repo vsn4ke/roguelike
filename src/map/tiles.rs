@@ -13,6 +13,8 @@ pub enum Surface {
     WoodFloor,
     Path,
     UpStairs,
+    Stalactite,
+    Stalagmite,
 }
 
 pub fn is_tile_walkable(tile_type: Surface) -> bool {
@@ -32,5 +34,8 @@ pub fn is_tile_walkable(tile_type: Surface) -> bool {
 }
 
 pub fn is_tile_opaque(tile_type: Surface) -> bool {
-    matches!(tile_type, Surface::Wall)
+    matches!(
+        tile_type,
+        Surface::Wall | Surface::Stalactite | Surface::Stalagmite
+    )
 }

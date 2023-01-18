@@ -1,4 +1,4 @@
-use bracket_lib::{random::RandomNumberGenerator, terminal::RGB};
+use bracket_lib::terminal::RGB;
 
 pub const BLACK: &str = "#000000";
 pub const WHITE: &str = "#FFFFFF";
@@ -10,7 +10,6 @@ pub const BROWN2: &str = "#8f4c28";
 pub const BROWN3: &str = "#965a31";
 pub const BROWN4: &str = "#a67c51";
 pub const BROWN5: &str = "#b99d67";
-pub const PALETTE_FLOOR: [&str; 5] = [BROWN1, BROWN2, BROWN3, BROWN4, BROWN5];
 
 // forest green
 pub const GREEN1: &str = "#003101";
@@ -19,7 +18,6 @@ pub const GREEN3: &str = "#024000";
 pub const GREEN4: &str = "#064900";
 pub const GREEN5: &str = "#00510a";
 pub const GREEN6: &str = "#008800";
-pub const PALETTE_FOREST: [&str; 5] = [GREEN1, GREEN2, GREEN3, GREEN4, GREEN5];
 
 // rock gray
 pub const GRAY1: &str = "#2d2c2c";
@@ -27,7 +25,7 @@ pub const GRAY2: &str = "#3a3232";
 pub const GRAY3: &str = "#493c3c";
 pub const GRAY4: &str = "#5c4949";
 pub const GRAY5: &str = "#655353";
-pub const PALETTE_ROCKS: [&str; 5] = [GRAY1, GRAY2, GRAY3, GRAY4, GRAY5];
+pub const GRAY6: &str = "#858893";
 
 // reds
 pub const RED1: &str = "#b62020";
@@ -55,26 +53,13 @@ pub const DEEPSEA2: &str = "#0100af";
 pub const DEEPSEA3: &str = "#0100a0";
 pub const DEEPSEA4: &str = "#010090";
 pub const DEEPSEA5: &str = "#010088";
-pub const PALETTE_DEEPSEA: [&str; 5] = [DEEPSEA1, DEEPSEA2, DEEPSEA3, DEEPSEA4, DEEPSEA5];
 
 pub const SHALLOWWATERS1: &str = "#77d9d9";
 pub const SHALLOWWATERS2: &str = "#77c5d9";
 pub const SHALLOWWATERS3: &str = "#77b2d9";
 pub const SHALLOWWATERS4: &str = "#779ed9";
 pub const SHALLOWWATERS5: &str = "#778bd9";
-pub const PALETTE_SHALLOWWATERS: [&str; 5] = [
-    SHALLOWWATERS1,
-    SHALLOWWATERS2,
-    SHALLOWWATERS3,
-    SHALLOWWATERS4,
-    SHALLOWWATERS5,
-];
 
 pub fn c(color: &str) -> RGB {
     RGB::from_hex(color).unwrap()
-}
-
-pub fn rc(palette: [&str; 5]) -> RGB {
-    let mut rng = RandomNumberGenerator::new();
-    c(palette[rng.range(0, 5)])
 }

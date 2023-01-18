@@ -8,7 +8,7 @@ use bracket_lib::{
 
 use crate::map::spatial::is_blocked;
 
-use super::{BuilderMap, Surface};
+use super::{BuilderChain, BuilderMap, Surface};
 
 #[derive(Debug)]
 enum BuildingTag {
@@ -21,6 +21,13 @@ enum BuildingTag {
     Hovel,
     Abandoned,
     Unassigned,
+}
+
+pub fn town_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
+    let mut builder = BuilderChain::new(depth, width, height, "Town of Lost Hope");
+    builder.start_with(TownBuilder::new());
+
+    builder
 }
 
 pub struct TownBuilder {}

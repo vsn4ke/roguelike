@@ -19,7 +19,6 @@ pub mod corridor_spawner;
 pub mod cull_unreachable;
 pub mod distant_exit;
 pub mod door_placement;
-pub mod forest_road;
 pub mod nothing;
 pub mod paint;
 pub mod room_based_spawner;
