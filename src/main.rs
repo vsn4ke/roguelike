@@ -105,6 +105,7 @@ fn main() {
     gs.ecs.register::<effect::Confusion>();
     gs.ecs.register::<props::SingleActivation>();
     gs.ecs.register::<props::Door>();
+    gs.ecs.register::<props::LightSource>();
 
     raws::load_raws();
 

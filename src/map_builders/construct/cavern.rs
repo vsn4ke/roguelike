@@ -52,6 +52,7 @@ impl super::MetaMapBuilder for CavernDecorator {
             }
         }
         data.take_snapshot();
+        data.map.outdoors = false;
     }
 }
 

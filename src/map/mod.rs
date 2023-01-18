@@ -6,11 +6,16 @@ pub mod tiles;
 use master::MasterMap;
 use tiles::{is_tile_opaque, is_tile_walkable, Surface};
 
-use super::{map_builders::level_builder, unit::Viewshed, OtherLevelPosition, Position};
+use super::{
+    colors::{c, BLACK},
+    map_builders::level_builder,
+    unit::Viewshed,
+    OtherLevelPosition, Position,
+};
 
 use bracket_lib::{
     prelude::{Algorithm2D, BaseMap, SmallVec},
-    terminal::{DistanceAlg, Point, Rect},
+    terminal::{DistanceAlg, Point, Rect, RGB},
 };
 
 use specs::prelude::*;
@@ -23,6 +28,7 @@ pub struct Map {
     pub tiles: Vec<Tile>,
     pub rooms: Vec<Rect>,
     pub name: String,
+    pub outdoors: bool,
 }
 
 #[derive(Clone, Default)]
@@ -32,6 +38,7 @@ pub struct Tile {
     pub visible: bool,
     pub block_visibility: bool,
     pub bloodstains: bool,
+    pub light: RGB,
 }
 
 impl Tile {
@@ -42,6 +49,7 @@ impl Tile {
             visible: false,
             block_visibility: false,
             bloodstains: false,
+            light: c(BLACK),
         }
     }
 }
@@ -56,6 +64,7 @@ impl Map {
             depth,
             rooms: Vec::new(),
             name: name.to_string(),
+            outdoors: true,
             tiles: vec![Tile::new(); tiles_count],
         }
     }

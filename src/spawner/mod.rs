@@ -12,6 +12,7 @@ use super::{
     colors::*,
     gamesystem::{player_hp, total_mana},
     map::{tiles::Surface, Map},
+    props::LightSource,
     raws::{spawn_named_entity, spawn_table::get_spawn_table_for_depth, SpawnType, RAWS},
     unit::{Attribute, Attributes, Player, Pool, Pools, Skill, Skills, Viewshed},
     Name, Position, Renderable,
@@ -134,6 +135,10 @@ pub fn build_player_entity(ecs: &mut World, x: i32, y: i32) -> Entity {
             level: 1,
         })
         .with(skills)
+        .with(LightSource {
+            color: c(YELLOW5),
+            range: 8,
+        })
         .build();
 
     spawn_named_entity(

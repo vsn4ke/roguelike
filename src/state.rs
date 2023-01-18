@@ -21,6 +21,7 @@ use super::{
         ai::{animal::AnimalAI, bystander::BystanderAI, monster::MonsterAI},
         damage::{delete_the_deads, DamageSystem},
         inventory::*,
+        lighting::LightingSystem,
         map_indexing::MapIndexingSystem,
         melee_combat::MeleeCombatSystem,
         particle::{cull_dead_particles, ParticleSpawnSystem},
@@ -66,6 +67,7 @@ pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
         .with(ItemUseSystem {}, "item", &[])
         .with(TriggerSystem {}, "triggers", &[])
         .with(DamageSystem {}, "damage", &[])
+        .with(LightingSystem {}, "lighting", &[])
         .with(ParticleSpawnSystem {}, "particles", &[])
         .build()
 }

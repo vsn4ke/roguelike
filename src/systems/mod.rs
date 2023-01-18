@@ -5,7 +5,7 @@ use super::{
         Consumable, EquipmentSlot, Equippable, Equipped, InBackpack, Item, MeleeWeapon, Wearable,
     },
     map::{spatial, Map},
-    props::SingleActivation,
+    props::{LightSource, SingleActivation},
     raws::{
         SpawnType, RAWS,
         {items::spawn_named_item, loot::get_loots},
@@ -18,13 +18,12 @@ use super::{
     BlocksVisibility, Hidden, Log, Name, ParticleLifetime, Position, Renderable,
 };
 
+pub mod ai;
+pub mod damage;
 pub mod inventory;
+pub mod lighting;
+pub mod map_indexing;
 pub mod melee_combat;
 pub mod particle;
 pub mod trigger;
-
-pub mod ai;
-
-pub mod damage;
-pub mod map_indexing;
 pub mod visibility;

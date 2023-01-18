@@ -10,7 +10,7 @@ pub fn get_tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         _ => get_default_glyph(idx, map),
     };
 
-    let bg = if map.tiles[idx].bloodstains && map.tiles[idx].visible {
+    let mut bg = if map.tiles[idx].bloodstains && map.tiles[idx].visible {
         RGB::from_f32(0.75, 0., 0.)
     } else {
         theme_bg
@@ -18,6 +18,11 @@ pub fn get_tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
 
     if !map.tiles[idx].visible {
         fg = fg.to_greyscale();
+    }
+
+    if !map.outdoors {
+        fg = fg * map.tiles[idx].light;
+        bg = bg * map.tiles[idx].light;
     }
 
     (glyph, fg, bg)

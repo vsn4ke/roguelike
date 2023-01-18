@@ -1,9 +1,10 @@
 use super::{
+    super::colors::c,
     bonus_from_attribute, npc_hp,
     rawmaster::{get_renderable_component, spawn_position},
     spawn_named_entity, total_mana, Attribute, Attributes, BlocksTile, Bystander, Carnivore,
-    Entity, Herbivore, LootTable, Monster, Name, NaturalAttack, NaturalProperty, Pool, Pools,
-    Quips, RawMaster, RenderableRaw, Skill, Skills, SpawnType, Vendor, Viewshed,
+    Entity, Herbivore, LightSource, LootTable, Monster, Name, NaturalAttack, NaturalProperty, Pool,
+    Pools, Quips, RawMaster, RenderableRaw, Skill, Skills, SpawnType, Vendor, Viewshed,
 };
 use bracket_lib::random::parse_dice_string;
 use serde::Deserialize;
@@ -26,6 +27,7 @@ pub struct MobRaw {
     pub equipped: Option<Vec<String>>,
     pub natural: Option<MobNaturalRaw>,
     pub loot_table: Option<String>,
+    pub light: Option<LightRaw>,
 }
 
 #[derive(Deserialize)]
@@ -47,6 +49,12 @@ pub struct NaturalAttackRaw {
     pub name: String,
     pub hit_bonus: i32,
     pub damage: String,
+}
+
+#[derive(Deserialize)]
+pub struct LightRaw {
+    pub color: String,
+    pub range: i32,
 }
 
 pub fn spawn_named_mob(
@@ -226,6 +234,13 @@ pub fn spawn_named_mob(
     if let Some(loot) = &mob_template.loot_table {
         eb = eb.with(LootTable {
             table: loot.clone(),
+        });
+    }
+
+    if let Some(light) = &mob_template.light {
+        eb = eb.with(LightSource {
+            range: light.range,
+            color: c(&light.color),
         });
     }
 
