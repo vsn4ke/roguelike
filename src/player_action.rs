@@ -199,6 +199,7 @@ pub fn input(gs: &mut State, ctx: &mut BTerm) -> RunState {
             VirtualKeyCode::I => return RunState::ShowInventory,
             VirtualKeyCode::D => return RunState::ShowDropItem,
             VirtualKeyCode::R => return RunState::ShowRemoveItem,
+            VirtualKeyCode::Minus => return RunState::ShowCheatMenu,
             VirtualKeyCode::Escape => {
                 return RunState::MainMenu {
                     menu_selection: MainMenuSelection::Continue,

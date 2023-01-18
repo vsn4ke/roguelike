@@ -2,7 +2,14 @@ use super::{
     action::{WantsToDropItem, WantsToRemoveItem, WantsToUseItem},
     camera::{render_camera, render_debug_map},
     effect::Ranged,
-    gui::{inventory::*, menu::*, target::ranged_target, tooltips::draw_tooltips, ui::draw_ui},
+    gui::{
+        cheat::{show_cheat_menu, CheatMenuResult},
+        inventory::*,
+        menu::*,
+        target::ranged_target,
+        tooltips::draw_tooltips,
+        ui::draw_ui,
+    },
     map::{
         level_transition,
         master::{freeze_level_entities, unfreeze_level_entities, MasterMap},
@@ -20,7 +27,7 @@ use super::{
         trigger::TriggerSystem,
         visibility::VisibilitySystem,
     },
-    Log, SHOW_MAPGEN_VISUALIZER, First
+    First, Log, SHOW_MAPGEN_VISUALIZER,
 };
 
 use bracket_lib::terminal::{BTerm, GameState};
@@ -41,6 +48,7 @@ pub enum RunState {
     ShowRemoveItem,
     MapGeneration,
     PreviousLevel,
+    ShowCheatMenu,
 }
 
 pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
@@ -295,6 +303,15 @@ impl GameState for State {
                 self.gen.next_state = Some(RunState::PreRun);
                 newrunstate = RunState::MapGeneration;
             }
+            RunState::ShowCheatMenu => match show_cheat_menu(ctx) {
+                CheatMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
+                CheatMenuResult::NoResponse => {}
+                CheatMenuResult::TeleportToExit => {
+                    self.goto_level(1);
+                    self.gen.next_state = Some(RunState::PreRun);
+                    newrunstate = RunState::MapGeneration;
+                }
+            },
         }
         {
             let mut runwriter = self.ecs.write_resource::<RunState>();
