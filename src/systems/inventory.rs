@@ -1,7 +1,7 @@
 use super::{
     super::colors::*, particle::ParticleBuilder, spatial::get_content, AreaOfEffect, Confusion,
-    Consumable, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Monster, Name, Pools,
-    Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
+    Consumable, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Name, Pools, Position,
+    ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
     WantsToUseItem,
 };
 use bracket_lib::{
@@ -67,7 +67,6 @@ impl<'a> System<'a> for ItemUseSystem {
         ReadStorage<'a, Equippable>,
         WriteStorage<'a, Equipped>,
         WriteStorage<'a, InBackpack>,
-        ReadStorage<'a, Monster>,
         WriteExpect<'a, ParticleBuilder>,
         ReadStorage<'a, Position>,
     );
@@ -90,7 +89,6 @@ impl<'a> System<'a> for ItemUseSystem {
             equippable,
             mut equipped,
             mut backpack,
-            monsters,
             mut particle_builder,
             positions,
         ) = data;
@@ -106,9 +104,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     for tile_pt in blast_tiles.iter() {
                         let idx = map.point2d_to_index(*tile_pt);
                         for mob in get_content(idx).iter() {
-                            if monsters.get(*mob).is_some() {
-                                targets.push(*mob);
-                            }
+                            targets.push(*mob);
                         }
                         particle_builder.request(
                             tile_pt.x,
@@ -124,9 +120,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     let idx = map.point2d_to_index(target);
 
                     for mob in get_content(idx).iter() {
-                        if monsters.get(*mob).is_some() {
-                            targets.push(*mob);
-                        }
+                        targets.push(*mob);
                     }
                 }
             } else {

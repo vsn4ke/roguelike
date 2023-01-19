@@ -53,8 +53,15 @@ impl<'a> System<'a> for MeleeCombatSystem {
         )
             .join()
         {
-            let target_pools = pools.get(wants_melee.target).unwrap();
-            if source_pools.hit_points.current <= 0 || target_pools.hit_points.current <= 0 {
+            if let Some(target_pools) = pools.get(wants_melee.target) {
+                if target_pools.hit_points.current <= 0 {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+
+            if source_pools.hit_points.current <= 0 {
                 continue;
             }
 

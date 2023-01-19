@@ -11,14 +11,18 @@ use super::{
         ui::draw_ui,
     },
     map::{
-        level_transition,
+        master::level_transition,
         master::{freeze_level_entities, unfreeze_level_entities, MasterMap},
         Map,
     },
     player_action::input,
     spawner::build_player_entity,
     systems::{
-        ai::{animal::AnimalAI, bystander::BystanderAI, monster::MonsterAI},
+        ai::{
+            adjacent::AdjacentAI, approaching::ApproachAI, default::DefaultMoveAI, fleeing::FleeAI,
+            initiative::InitiativeSystem, quipping::QuipSystem, turn_status::TurnStatusSystem,
+            visible::VisibleAI,
+        },
         damage::{delete_the_deads, DamageSystem},
         inventory::*,
         lighting::LightingSystem,
@@ -38,8 +42,6 @@ use specs::prelude::*;
 pub enum RunState {
     AwaitingInput,
     PreRun,
-    PlayerTurn,
-    MonsterTurn,
     ShowInventory,
     ShowDropItem,
     ShowTargeting { range: i32, item: Entity },
@@ -50,15 +52,20 @@ pub enum RunState {
     MapGeneration,
     PreviousLevel,
     ShowCheatMenu,
+    Ticking,
 }
 
 pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         .with(MapIndexingSystem {}, "map_index", &[])
         .with(VisibilitySystem {}, "visibility", &[])
-        .with(MonsterAI {}, "mobs", &[])
-        .with(AnimalAI {}, "animals", &[])
-        .with(BystanderAI {}, "bystanders", &[])
+        .with(InitiativeSystem {}, "initiative", &[])
+        .with(TurnStatusSystem {}, "turn_status", &[])
+        .with(AdjacentAI {}, "adjacent", &[])
+        .with(VisibleAI {}, "visible", &[])
+        .with(ApproachAI {}, "approach", &[])
+        .with(FleeAI {}, "flee", &[])
+        .with(DefaultMoveAI {}, "default_move", &[])
         .with(MeleeCombatSystem {}, "melee", &[])
         .with(ItemCollectionSystem {}, "pickup", &[])
         .with(ItemUseSystem {}, "use", &[])
@@ -66,6 +73,7 @@ pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
         .with(ItemDropSystem {}, "drop", &[])
         .with(ItemUseSystem {}, "item", &[])
         .with(TriggerSystem {}, "triggers", &[])
+        .with(QuipSystem {}, "quipping", &[])
         .with(DamageSystem {}, "damage", &[])
         .with(LightingSystem {}, "lighting", &[])
         .with(ParticleSpawnSystem {}, "particles", &[])
@@ -153,15 +161,15 @@ impl GameState for State {
             RunState::AwaitingInput => {
                 newrunstate = input(self, ctx);
             }
-            RunState::PlayerTurn => {
-                self.run_systems();
-                self.ecs.maintain();
-                newrunstate = RunState::MonsterTurn;
-            }
-            RunState::MonsterTurn => {
-                self.run_systems();
-                self.ecs.maintain();
-                newrunstate = RunState::AwaitingInput;
+            RunState::Ticking => {
+                while newrunstate == RunState::Ticking {
+                    self.run_systems();
+                    self.ecs.maintain();
+                    newrunstate = match *self.ecs.fetch::<RunState>() {
+                        RunState::AwaitingInput => RunState::AwaitingInput,
+                        _ => RunState::Ticking,
+                    }
+                }
             }
             RunState::ShowInventory => {
                 let result = show_inventory(self, ctx);
@@ -187,7 +195,7 @@ impl GameState for State {
                                     },
                                 )
                                 .expect("Unable to insert intent");
-                            newrunstate = RunState::PlayerTurn;
+                            newrunstate = RunState::Ticking;
                         }
                     }
                 }
@@ -206,7 +214,7 @@ impl GameState for State {
                                 WantsToDropItem { item: item_entity },
                             )
                             .expect("Unable to insert intent");
-                        newrunstate = RunState::PlayerTurn;
+                        newrunstate = RunState::Ticking;
                     }
                 }
             }
@@ -224,7 +232,7 @@ impl GameState for State {
                                 WantsToRemoveItem { item: item_entity },
                             )
                             .expect("Unable to insert intent");
-                        newrunstate = RunState::PlayerTurn;
+                        newrunstate = RunState::Ticking;
                     }
                 }
             }
@@ -244,7 +252,7 @@ impl GameState for State {
                                 },
                             )
                             .expect("Unable to insert intent");
-                        newrunstate = RunState::PlayerTurn;
+                        newrunstate = RunState::Ticking;
                     }
                 }
             }

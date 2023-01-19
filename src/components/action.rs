@@ -28,3 +28,13 @@ pub struct WantsToDropItem {
 pub struct WantsToRemoveItem {
     pub item: Entity,
 }
+
+#[derive(Component)]
+pub struct WantsToApproach {
+    pub idx: i32,
+}
+
+#[derive(Component)]
+pub struct WantsToFlee {
+    pub indices: Vec<usize>,
+}

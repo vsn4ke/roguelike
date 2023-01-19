@@ -1,9 +1,7 @@
 use super::{
     action::{WantsToDropItem, WantsToMelee, WantsToPickupItem, WantsToRemoveItem, WantsToUseItem},
     effect::{AreaOfEffect, Confusion, EntryTrigger, InflictsDamage, ProvidesHealing},
-    item::{
-        Consumable, EquipmentSlot, Equippable, Equipped, InBackpack, Item, MeleeWeapon, Wearable,
-    },
+    item::{Consumable, EquipmentSlot, Equippable, Equipped, InBackpack, MeleeWeapon, Wearable},
     map::{spatial, Map},
     props::{LightSource, SingleActivation},
     raws::{
@@ -12,8 +10,8 @@ use super::{
     },
     state::RunState,
     unit::{
-        Attributes, Bystander, Carnivore, EntityMoved, Herbivore, LootTable, Monster,
-        NaturalProperty, Player, Pools, Quips, Skill, Skills, SufferDamage, Viewshed,
+        Attributes, EntityMoved, Initiative, LootTable, MyTurn, NaturalProperty, Player, Pools,
+        Skill, Skills, SufferDamage, Viewshed,
     },
     BlocksVisibility, Hidden, Log, Name, ParticleLifetime, Position, Renderable,
 };

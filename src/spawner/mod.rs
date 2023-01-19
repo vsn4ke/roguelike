@@ -14,7 +14,9 @@ use super::{
     map::{tiles::Surface, Map},
     props::LightSource,
     raws::{spawn_named_entity, spawn_table::get_spawn_table_for_depth, SpawnType, RAWS},
-    unit::{Attribute, Attributes, Player, Pool, Pools, Skill, Skills, Viewshed},
+    unit::{
+        Attribute, Attributes, Faction, Initiative, Player, Pool, Pools, Skill, Skills, Viewshed,
+    },
     Name, Position, Renderable,
 };
 
@@ -138,6 +140,10 @@ pub fn build_player_entity(ecs: &mut World, x: i32, y: i32) -> Entity {
         .with(LightSource {
             color: c(YELLOW5),
             range: 8,
+        })
+        .with(Initiative { current: 0 })
+        .with(Faction {
+            name: "Player".to_string(),
         })
         .build();
 

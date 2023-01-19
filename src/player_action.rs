@@ -1,3 +1,8 @@
+use crate::raws::{
+    factions::{faction_reaction, Reaction},
+    RAWS,
+};
+
 use super::{
     action::{WantsToMelee, WantsToPickupItem, WantsToUseItem},
     effect::Ranged,
@@ -9,7 +14,7 @@ use super::{
     },
     props::Door,
     state::{RunState, State},
-    unit::{Bystander, EntityMoved, Player, Pools, Vendor, Viewshed},
+    unit::{Attributes, EntityMoved, Faction, Player, Viewshed},
     BlocksTile, BlocksVisibility, Log, Map, Position, Renderable,
 };
 use bracket_lib::{
@@ -23,13 +28,11 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
     let mut players = ecs.write_storage::<Player>();
     let mut viewsheds = ecs.write_storage::<Viewshed>();
     let mut entity_moved = ecs.write_storage::<EntityMoved>();
-    let pools = ecs.read_storage::<Pools>();
-    let bystanders = ecs.read_storage::<Bystander>();
-    let vendors = ecs.read_storage::<Vendor>();
+    let combat_stats = ecs.read_storage::<Attributes>();
     let map = ecs.fetch::<Map>();
     let entities = ecs.entities();
     let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
-
+    let factions = ecs.read_storage::<Faction>();
     let mut doors = ecs.write_storage::<Door>();
     let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
     let mut blocks_movement = ecs.write_storage::<BlocksTile>();
@@ -47,9 +50,18 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
 
         let destination_idx = map.point2d_to_index(new);
         for potential_target in get_content(destination_idx).iter() {
-            if bystanders.get(*potential_target).is_some()
-                || vendors.get(*potential_target).is_some()
-            {
+            let mut hostile = true;
+            if combat_stats.get(*potential_target).is_some() {
+                if let Some(faction) = factions.get(*potential_target) {
+                    if faction_reaction(&faction.name, "Player", &RAWS.lock().unwrap())
+                        != Reaction::Attack
+                    {
+                        hostile = false;
+                    }
+                }
+            }
+
+            if !hostile {
                 swap_entities.push((*potential_target, pos.x, pos.y));
                 pos.x = (new.x).clamp(0, map.width - 1);
                 pos.y = (new.y).clamp(0, map.height - 1);
@@ -62,17 +74,19 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
                 ppos.x = pos.x;
                 ppos.y = pos.y;
 
-                result = RunState::PlayerTurn;
-            } else if pools.get(*potential_target).is_some() {
-                wants_to_melee
-                    .insert(
-                        entity,
-                        WantsToMelee {
-                            target: *potential_target,
-                        },
-                    )
-                    .expect("Add target failed");
-                return RunState::PlayerTurn;
+                result = RunState::Ticking;
+            } else {
+                if combat_stats.get(*potential_target).is_some() {
+                    wants_to_melee
+                        .insert(
+                            entity,
+                            WantsToMelee {
+                                target: *potential_target,
+                            },
+                        )
+                        .expect("Add target failed");
+                    return RunState::Ticking;
+                }
             }
 
             if let Some(door) = doors.get_mut(*potential_target) {
@@ -104,7 +118,7 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
             result = match map.tiles[destination_idx].surface {
                 Surface::DownStairs => RunState::NextLevel,
                 Surface::UpStairs => RunState::PreviousLevel,
-                _ => RunState::PlayerTurn,
+                _ => RunState::Ticking,
             }
         }
     }
@@ -208,7 +222,7 @@ pub fn input(gs: &mut State, ctx: &mut BTerm) -> RunState {
             _ => return RunState::AwaitingInput,
         },
     }
-    RunState::PlayerTurn
+    RunState::Ticking
 }
 
 fn use_consumable_hotkey(gs: &mut State, key: usize) -> RunState {
@@ -225,7 +239,7 @@ fn use_consumable_hotkey(gs: &mut State, key: usize) -> RunState {
     }
 
     if key >= carried_consumables.len() {
-        return RunState::PlayerTurn;
+        return RunState::Ticking;
     }
 
     if let Some(ranged) = gs
@@ -248,5 +262,5 @@ fn use_consumable_hotkey(gs: &mut State, key: usize) -> RunState {
             },
         )
         .expect("Unable to insert intent");
-    RunState::PlayerTurn
+    RunState::Ticking
 }

@@ -11,7 +11,7 @@ impl super::InitialMapBuilder for CellularAutomataBuilder {
             for x in 1..data.map.width - 1 {
                 let roll = rng.range(0, 100);
                 let idx = data.map.coord_to_index(x, y);
-                if roll > 60 {
+                if roll > 45 {
                     data.map.tiles[idx].surface = Surface::Floor
                 } else {
                     data.map.tiles[idx].surface = Surface::Wall

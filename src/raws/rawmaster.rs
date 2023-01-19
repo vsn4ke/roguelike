@@ -1,6 +1,7 @@
 use super::{
-    c, items::find_slot_for_equippable_item, items::spawn_named_item, mobs::spawn_named_mob,
-    props::spawn_named_prop, Equipped, InBackpack, Position, Raws, Renderable, RenderableRaw,
+    c, factions::Reaction, items::find_slot_for_equippable_item, items::spawn_named_item,
+    mobs::spawn_named_mob, props::spawn_named_prop, Equipped, InBackpack, Position, Raws,
+    Renderable, RenderableRaw,
 };
 use bracket_lib::terminal::to_cp437;
 use specs::prelude::*;
@@ -18,6 +19,7 @@ pub struct RawMaster {
     pub mob_index: HashMap<String, usize>,
     pub prop_index: HashMap<String, usize>,
     pub loot_index: HashMap<String, usize>,
+    pub faction_index: HashMap<String, HashMap<String, Reaction>>,
 }
 
 impl RawMaster {
@@ -29,11 +31,13 @@ impl RawMaster {
                 props: Vec::new(),
                 spawn_tables: Vec::new(),
                 loot_tables: Vec::new(),
+                faction_tables: Vec::new(),
             },
             item_index: HashMap::new(),
             mob_index: HashMap::new(),
             prop_index: HashMap::new(),
             loot_index: HashMap::new(),
+            faction_index: HashMap::new(),
         }
     }
 
@@ -75,6 +79,21 @@ impl RawMaster {
                     spawn.name
                 );
             }
+        }
+
+        for faction in self.raws.faction_tables.iter() {
+            let mut reactions: HashMap<String, Reaction> = HashMap::new();
+            for other in faction.responses.iter() {
+                reactions.insert(
+                    other.0.clone(),
+                    match other.1.as_str() {
+                        "ignore" => Reaction::Ignore,
+                        "flee" => Reaction::Flee,
+                        _ => Reaction::Attack,
+                    },
+                );
+            }
+            self.faction_index.insert(faction.name.clone(), reactions);
         }
     }
 }

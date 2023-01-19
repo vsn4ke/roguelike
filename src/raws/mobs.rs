@@ -2,9 +2,9 @@ use super::{
     super::colors::c,
     bonus_from_attribute, npc_hp,
     rawmaster::{get_renderable_component, spawn_position},
-    spawn_named_entity, total_mana, Attribute, Attributes, BlocksTile, Bystander, Carnivore,
-    Entity, Herbivore, LightSource, LootTable, Monster, Name, NaturalAttack, NaturalProperty, Pool,
-    Pools, Quips, RawMaster, RenderableRaw, Skill, Skills, SpawnType, Vendor, Viewshed,
+    spawn_named_entity, total_mana, Attribute, Attributes, BlocksTile, Entity, Faction, Initiative,
+    LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack, NaturalProperty, Pool,
+    Pools, Quips, RawMaster, RenderableRaw, Skill, Skills, SpawnType, Viewshed,
 };
 use bracket_lib::random::parse_dice_string;
 use serde::Deserialize;
@@ -17,7 +17,7 @@ pub struct MobRaw {
     pub renderable: Option<RenderableRaw>,
     pub blocks_tile: bool,
     pub vision_range: i32,
-    pub ai: String,
+    pub movement: String,
     pub quips: Option<Vec<String>>,
     pub attributes: AttributesRaw,
     pub skills: Option<HashMap<String, i32>>,
@@ -28,6 +28,7 @@ pub struct MobRaw {
     pub natural: Option<MobNaturalRaw>,
     pub loot_table: Option<String>,
     pub light: Option<LightRaw>,
+    pub faction: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -79,15 +80,6 @@ pub fn spawn_named_mob(
         name: mob_template.name.clone(),
     });
 
-    match mob_template.ai.as_ref() {
-        "melee" => eb = eb.with(Monster {}),
-        "bystander" => eb = eb.with(Bystander {}),
-        "vendor" => eb = eb.with(Vendor {}),
-        "carnivore" => eb = eb.with(Carnivore {}),
-        "herbivore" => eb = eb.with(Herbivore {}),
-        _ => {}
-    }
-
     if mob_template.blocks_tile {
         eb = eb.with(BlocksTile {});
     }
@@ -96,6 +88,13 @@ pub fn spawn_named_mob(
         visible_tiles: Vec::new(),
         range: mob_template.vision_range,
         dirty: true,
+    });
+
+    eb = eb.with(MovementMode {
+        mode: match mob_template.movement.as_ref() {
+            "random" => Movement::Random,
+            _ => Movement::Static,
+        },
     });
 
     if let Some(quips) = &mob_template.quips {
@@ -161,11 +160,7 @@ pub fn spawn_named_mob(
 
     eb = eb.with(attr);
 
-    let mob_level = if mob_template.level.is_some() {
-        mob_template.level.unwrap()
-    } else {
-        1
-    };
+    let mob_level = mob_template.level.unwrap_or(1);
     let mob_hp = npc_hp(attr.fitness.base, mob_level);
     let mob_mana = total_mana(attr.intelligence.base, mob_level);
 
@@ -243,6 +238,15 @@ pub fn spawn_named_mob(
             color: c(&light.color),
         });
     }
+
+    eb = eb.with(Initiative { current: 2 });
+
+    eb = eb.with(Faction {
+        name: mob_template
+            .faction
+            .clone()
+            .unwrap_or("Mindless".to_string()),
+    });
 
     //Mob Equippement
     let mob = eb.build();

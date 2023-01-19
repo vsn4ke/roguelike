@@ -8,21 +8,6 @@ use specs_derive::*;
 pub struct Player {}
 
 #[derive(Component)]
-pub struct Bystander {}
-
-#[derive(Component)]
-pub struct Vendor {}
-
-#[derive(Component)]
-pub struct Monster {}
-
-#[derive(Component)]
-pub struct Herbivore {}
-
-#[derive(Component)]
-pub struct Carnivore {}
-
-#[derive(Component)]
 pub struct Viewshed {
     pub visible_tiles: Vec<Point>,
     pub range: i32,
@@ -126,4 +111,34 @@ pub struct NaturalProperty {
 #[derive(Component)]
 pub struct LootTable {
     pub table: String,
+}
+
+#[derive(Component)]
+pub struct Initiative {
+    pub current: i32,
+}
+
+#[derive(Component)]
+pub struct MyTurn;
+
+#[derive(Component)]
+pub struct Faction {
+    pub name: String,
+}
+
+#[derive(Clone)]
+pub enum Movement {
+    Static,
+    Random,
+    Waypoint { path: Option<Vec<usize>> },
+}
+
+#[derive(Component)]
+pub struct MovementMode {
+    pub mode: Movement,
+}
+
+#[derive(Component)]
+pub struct Chasing {
+    pub target: Entity,
 }

@@ -45,6 +45,7 @@ pub fn clear_spatial_map() {
 
 pub fn populate_blocked_from_map(map: &Map) {
     let mut lock = SPATIAL_MAP.lock().unwrap();
+
     for (i, tile) in map.tiles.iter().enumerate() {
         lock.tiles[i].block_movement = !is_tile_walkable(tile.surface);
     }
@@ -65,16 +66,12 @@ pub fn get_content(idx: usize) -> Vec<Entity> {
 
 pub fn move_entity(entity: Entity, moving_from: usize, moving_to: usize) {
     let mut lock = SPATIAL_MAP.lock().unwrap();
-    let mut is_entity_blocking = false;
-
     for (i, e) in lock.tiles[moving_from].content.clone().iter().enumerate() {
         if *e == entity {
-            is_entity_blocking = lock.tiles[moving_from].block_movement;
             lock.tiles[moving_from].content.remove(i);
             lock.tiles[moving_from].block_movement = false;
         }
     }
-
     lock.tiles[moving_to].content.push(entity);
-    lock.tiles[moving_to].block_movement = is_entity_blocking;
+    lock.tiles[moving_to].block_movement = true;
 }

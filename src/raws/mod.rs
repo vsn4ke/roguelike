@@ -1,3 +1,4 @@
+pub mod factions;
 pub mod items;
 pub mod loot;
 pub mod mobs;
@@ -46,6 +47,7 @@ pub struct Raws {
     pub props: Vec<props::PropRaw>,
     pub spawn_tables: Vec<spawn_table::SpawnTableEntry>,
     pub loot_tables: Vec<loot::LootTableRaw>,
+    pub faction_tables: Vec<factions::FactionInfoRaw>,
 }
 
 #[derive(Deserialize)]
