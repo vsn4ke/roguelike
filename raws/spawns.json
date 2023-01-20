@@ -63,7 +63,8 @@
             },
             "consumable" : {
                 "effects" : { "provides_healing" : "12" }
-            }
+            },
+            "weight" : 0.1
         },
         {
             "name" : "Shortsword",
@@ -78,7 +79,8 @@
                 "attribute" : "Might",
                 "base_damage" : "1d6",
                 "hit_bonus" : 0
-            }
+            },
+            "weight" : 0.8
         },
         
         {
@@ -92,7 +94,8 @@
             "wearable" : {
                 "slot" : "Torso",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.8
         },
         
         {
@@ -106,7 +109,8 @@
             "wearable" : {
                 "slot" : "Feet",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.6
         },
         {
             "name" : "Meat",
@@ -120,7 +124,8 @@
                 "effects" : { 
                     "provides_healing" : "4"
                 }
-            }
+            },
+            "weight" : 0.4
         },
         
         {
@@ -130,7 +135,8 @@
                 "fg" : "#A52A2A",
                 "bg" : "#000000",
                 "order" : 2
-            }
+            },
+            "weight" : 1.0
         },
     
         {
@@ -146,7 +152,8 @@
                     "ranged" : "6",
                     "damage" : "20"
                 }
-            }
+            },
+            "weight" : 0.05
         },
     
         {
@@ -163,7 +170,8 @@
                     "damage" : "20",
                     "area_of_effect" : "3"
                 }
-            }
+            },
+            "weight" : 0.05
         },
     
         {
@@ -179,7 +187,8 @@
                     "ranged" : "6",
                     "confusion" : "4"
                 }
-            }
+            },
+            "weight" : 0.05
         }, 
         {
             "name" : "Dagger",
@@ -194,7 +203,8 @@
                 "attribute" : "Quickness",
                 "base_damage" : "1d4", 
                 "hit_bonus" : 0
-            }
+            },
+            "weight" : 0.2
         },
         {
             "name" : "Rusty Longsword",
@@ -209,7 +219,8 @@
                 "attribute" : "Might",
                 "base_damage" : "1d8-1",
                 "hit_bonus" : -1
-            }
+            },
+            "weight" : 0.6
         },
     
         {
@@ -225,7 +236,8 @@
                 "attribute" : "Might",
                 "base_damage" : "1d8",
                 "hit_bonus" : 0
-            }
+            },
+            "weight" : 0.8
         },
     
         {
@@ -241,7 +253,8 @@
                 "attribute" : "Might",
                 "base_damage" : "1d10+1",
                 "hit_bonus" : 1
-            }
+            },
+            "weight" : 1.2
         },
     
         {
@@ -255,7 +268,8 @@
             "wearable" : {
                 "slot" : "Shield",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.9
         },
     
         {
@@ -269,7 +283,8 @@
             "wearable" : {
                 "slot" : "Shield",
                 "armor_class" : 3
-            }
+            },
+            "weight" : 2.0
         },
         {
             "name" : "Stained Tunic",
@@ -282,7 +297,8 @@
             "wearable" : {
                 "slot" : "Torso",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.7
         },
         
         {
@@ -296,7 +312,8 @@
             "wearable" : {
                 "slot" : "Legs",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.6
         },
         
         {
@@ -310,7 +327,8 @@
             "wearable" : {
                 "slot" : "Feet",
                 "armor_class" : 1
-            }
+            },
+            "weight" : 0.5
         },
         {
             "name" : "Cudgel",
@@ -325,7 +343,8 @@
                 "attribute" : "Quickness",
                 "base_damage" : "1d4",
                 "hit_bonus" : 0
-            }
+            },
+            "weight" : 0.6
         },
         
         {
@@ -339,7 +358,8 @@
             "wearable" : {
                 "slot" : "Torso",
                 "armor_class" : 0
-            }
+            },
+            "weight" : 0.4
         },
         
         {
@@ -353,7 +373,8 @@
             "wearable" : {
                 "slot" : "Legs",
                 "armor_class" : 0
-            }
+            },
+            "weight" : 0.3
         },
         
         {
@@ -367,7 +388,8 @@
             "wearable" : {
                 "slot" : "Legs",
                 "armor_class" : 0
-            }
+            },
+            "weight" : 0.2
         }
     ],
     

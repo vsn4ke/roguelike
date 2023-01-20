@@ -23,6 +23,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
         ReadStorage<'a, MeleeWeapon>,
         ReadStorage<'a, Wearable>,
         ReadStorage<'a, NaturalProperty>,
+        ReadExpect<'a, Entity>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -40,6 +41,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
             melee_weapons,
             wearables,
             natural_properties,
+            player_entity,
         ) = data;
 
         for (entity, wants_melee, source, source_attributes, source_skills, source_pools) in (
@@ -129,7 +131,12 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         + bonus_damage_from_skill
                         + bonus_damage_from_weapon,
                 );
-                SufferDamage::new_damage(&mut inflict_damage, wants_melee.target, damage_total);
+                SufferDamage::new_damage(
+                    &mut inflict_damage,
+                    wants_melee.target,
+                    damage_total,
+                    entity == *player_entity,
+                );
                 Log::new()
                     .append("(Roll")
                     .roll(&format!("{:02}", hit_roll))

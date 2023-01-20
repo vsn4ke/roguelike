@@ -26,8 +26,8 @@ const RESOURCES_PATH: &str = "resources/";
 const FONT_NAME: &str = "Kjammer_16x16.png";
 const FONT_SIZE: usize = 16;
 const TITLE: &str = "The Last Samouraï";
-const CONSOLE_WIDTH: usize = 80;
-const CONSOLE_HEIGHT: usize = 60;
+pub const CONSOLE_WIDTH: usize = 80;
+pub const CONSOLE_HEIGHT: usize = 60;
 const FPS_CAP: f32 = 30.0;
 const SHOW_MAPGEN_VISUALIZER: bool = false;
 

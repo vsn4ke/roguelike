@@ -210,7 +210,7 @@ impl<'a> System<'a> for ItemUseSystem {
             if let Some(damage) = inflicts_damage.get(useitem.item) {
                 used_item = false;
                 for mob in targets.iter() {
-                    SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage);
+                    SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage, true);
                     used_item = true;
                     if entity != *player_entity {
                         continue;

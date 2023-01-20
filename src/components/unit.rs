@@ -29,16 +29,21 @@ pub struct Quips {
 
 #[derive(Component)]
 pub struct SufferDamage {
-    pub amount: Vec<i32>,
+    pub amount: Vec<(i32, bool)>, // is the player doing the damage ?
 }
 
 impl SufferDamage {
-    pub fn new_damage(store: &mut WriteStorage<SufferDamage>, victim: Entity, amount: i32) {
+    pub fn new_damage(
+        store: &mut WriteStorage<SufferDamage>,
+        victim: Entity,
+        amount: i32,
+        from_player: bool,
+    ) {
         if let Some(suffering) = store.get_mut(victim) {
-            suffering.amount.push(amount);
+            suffering.amount.push((amount, from_player));
         } else {
             let damage = SufferDamage {
-                amount: vec![amount],
+                amount: vec![(amount, from_player)],
             };
             store
                 .insert(victim, damage)
@@ -109,15 +114,15 @@ impl Attributes {
             total_initiative_penalty: 0.0,
         }
     }
-    pub fn player_hp(self) -> i32 {
+    pub fn player_max_hp(self) -> i32 {
         10 + (10 + self.fitness.bonus()) * self.level
     }
 
-    pub fn npc_hp(self) -> i32 {
+    pub fn npc_max_hp(self) -> i32 {
         1 + i32::max(1, 8 + self.fitness.bonus()) * self.level
     }
 
-    pub fn total_mana(self) -> i32 {
+    pub fn max_mana(self) -> i32 {
         i32::max(1, 4 + self.intelligence.bonus()) * self.level
     }
 
@@ -144,7 +149,7 @@ impl Default for Attributes {
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Skills {
     pub melee: i32,
     pub magic: i32,
@@ -157,16 +162,6 @@ impl Skills {
             melee,
             magic,
             defense,
-        }
-    }
-}
-
-impl Default for Skills {
-    fn default() -> Self {
-        Self {
-            melee: 0,
-            magic: 0,
-            defense: 0,
         }
     }
 }
@@ -191,22 +186,25 @@ pub struct Pools {
     pub hit_points: Pool,
     pub mana: Pool,
     pub xp: i32,
+    pub money: i32,
 }
 
 impl Pools {
     pub fn new_npc(attr: Attributes) -> Self {
         Self {
+            money: 0,
             xp: 0,
-            hit_points: Pool::new(attr.npc_hp()),
-            mana: Pool::new(attr.total_mana()),
+            hit_points: Pool::new(attr.npc_max_hp()),
+            mana: Pool::new(attr.max_mana()),
         }
     }
 
     pub fn new_player(attr: Attributes) -> Self {
         Self {
+            money: 0,
             xp: 0,
-            hit_points: Pool::new(attr.player_hp()),
-            mana: Pool::new(attr.total_mana()),
+            hit_points: Pool::new(attr.player_max_hp()),
+            mana: Pool::new(attr.max_mana()),
         }
     }
 }

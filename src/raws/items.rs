@@ -18,8 +18,8 @@ pub struct ItemRaw {
     pub weapon: Option<WeaponRaw>,
     pub wearable: Option<WearableRaw>,
     pub initiative_penalty: Option<f32>,
-    pub weight_kg: Option<f32>,
-    pub base_value: Option<i32>,
+    pub weight: Option<f32>,
+    pub value: Option<i32>,
 }
 
 #[derive(Deserialize)]
@@ -65,8 +65,8 @@ pub fn spawn_named_item(
 
     eb = eb.with(Item {
         initiative_penalty: item_template.initiative_penalty.unwrap_or(0.0),
-        weight: item_template.weight_kg.unwrap_or(0.0),
-        base_value: item_template.base_value.unwrap_or(0),
+        weight: item_template.weight.unwrap_or(0.0),
+        base_value: item_template.value.unwrap_or(0),
     });
 
     if let Some(consumable) = &item_template.consumable {

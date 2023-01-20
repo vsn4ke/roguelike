@@ -5,7 +5,7 @@ use super::{
     Initiative, LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack,
     NaturalProperty, Pools, Quips, RawMaster, RenderableRaw, Skills, SpawnType, Viewshed,
 };
-use bracket_lib::random::parse_dice_string;
+use bracket_lib::random::{parse_dice_string, RandomNumberGenerator};
 use serde::Deserialize;
 use specs::prelude::*;
 use std::collections::HashMap;
@@ -28,6 +28,7 @@ pub struct MobRaw {
     pub loot_table: Option<String>,
     pub light: Option<LightRaw>,
     pub faction: Option<String>,
+    pub money: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -92,7 +93,7 @@ pub fn spawn_named_mob(
     eb = eb.with(MovementMode {
         mode: match mob_template.movement.as_ref() {
             "random" => Movement::Random,
-            "waypoint" => Movement::Waypoint{ path: None },
+            "waypoint" => Movement::Waypoint { path: None },
             _ => Movement::Static,
         },
     });
@@ -125,7 +126,14 @@ pub fn spawn_named_mob(
 
     eb = eb.with(attr);
 
-    eb = eb.with(Pools::new_npc(attr));
+    let mut pools = Pools::new_npc(attr);
+
+    if let Some(money) = &mob_template.money {
+        let mut rng = RandomNumberGenerator::new();
+        pools.money = rng.roll(parse_dice_string(money).unwrap());
+    }
+
+    eb = eb.with(pools);
 
     let mut skills = Skills::default();
 

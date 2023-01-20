@@ -1,8 +1,5 @@
 use super::super::{
-    camera::get_screen_bounds,
-    colors::*,
-    unit::Attributes,
-    Hidden, Map, Name, Position,
+    camera::get_screen_bounds, colors::*, unit::Attributes, Hidden, Map, Name, Position,
 };
 use bracket_lib::prelude::Algorithm2D;
 use bracket_lib::terminal::{to_cp437, BTerm, Point};

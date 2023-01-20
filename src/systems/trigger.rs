@@ -54,7 +54,7 @@ impl<'a> System<'a> for TriggerSystem {
 
                 if let Some(damage) = inflicts_damage.get(*entity_id) {
                     particle_builder.request(pos.x, pos.y, c(RED3), c(BLACK), to_cp437('‼'), 200.0);
-                    SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage);
+                    SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage, false);
                 }
 
                 if single_activation.get(*entity_id).is_some() {
