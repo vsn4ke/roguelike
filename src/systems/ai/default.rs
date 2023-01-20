@@ -14,7 +14,7 @@ impl<'a> System<'a> for DefaultMoveAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, MovementMode>,
         WriteStorage<'a, Position>,
-        WriteExpect<'a, Map>,
+        ReadExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
@@ -25,7 +25,7 @@ impl<'a> System<'a> for DefaultMoveAI {
             mut turns,
             mut move_mode,
             mut positions,
-            mut map,
+            map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -99,7 +99,7 @@ impl<'a> System<'a> for DefaultMoveAI {
                             let path = a_star_search(
                                 map.coord_to_index(pos.x, pos.y) as i32,
                                 map.coord_to_index(target_x, target_y) as i32,
-                                &mut *map,
+                                &*map,
                             );
                             if path.success && path.steps.len() > 1 {
                                 movement.mode = Movement::Waypoint {

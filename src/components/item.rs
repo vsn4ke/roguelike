@@ -2,7 +2,11 @@ use specs::prelude::*;
 use specs_derive::*;
 
 #[derive(Component)]
-pub struct Item {}
+pub struct Item {
+    pub initiative_penalty: f32,
+    pub weight: f32,
+    pub base_value: i32,
+}
 
 #[derive(Component)]
 pub struct InBackpack {
@@ -66,3 +70,6 @@ pub struct Wearable {
     pub armor_class: i32,
     pub slot: EquipmentSlot,
 }
+
+#[derive(Component)]
+pub struct EquipmentChanged {}

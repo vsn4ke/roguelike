@@ -42,7 +42,7 @@ impl<'a> System<'a> for InitiativeSystem {
             if initiative.current >= 1 {
                 continue;
             }
-            
+
             let mut myturn = true;
             turns
                 .insert(entity, MyTurn {})
@@ -50,7 +50,7 @@ impl<'a> System<'a> for InitiativeSystem {
             initiative.current = 6 + rng.range(0, 6);
 
             if let Some(attr) = attributes.get(entity) {
-                initiative.current -= attr.quickness.bonus;
+                initiative.current += attr.initiative_bonus();
             }
 
             if entity == *player {

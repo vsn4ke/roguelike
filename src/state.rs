@@ -19,9 +19,9 @@ use super::{
     spawner::build_player_entity,
     systems::{
         ai::{
-            adjacent::AdjacentAI, approaching::ApproachAI, default::DefaultMoveAI, fleeing::FleeAI,
-            initiative::InitiativeSystem, quipping::QuipSystem, turn_status::TurnStatusSystem,
-            visible::VisibleAI,
+            adjacent::AdjacentAI, approaching::ApproachAI, default::DefaultMoveAI,
+            encumbrance::EncumbranceSystem, fleeing::FleeAI, initiative::InitiativeSystem,
+            quipping::QuipSystem, turn_status::TurnStatusSystem, visible::VisibleAI,
         },
         damage::{delete_the_deads, DamageSystem},
         inventory::*,
@@ -75,6 +75,7 @@ pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
         .with(TriggerSystem {}, "triggers", &[])
         .with(QuipSystem {}, "quipping", &[])
         .with(DamageSystem {}, "damage", &[])
+        .with(EncumbranceSystem {}, "encumbrance", &[])
         .with(LightingSystem {}, "lighting", &[])
         .with(ParticleSpawnSystem {}, "particles", &[])
         .build()

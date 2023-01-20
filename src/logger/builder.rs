@@ -48,7 +48,7 @@ impl Log {
 
     pub fn item<S: ToString>(mut self, text: &S) -> Self {
         self.fragments.push(LogFragment {
-            color: c(SHALLOWWATERS5),
+            color: c(SHALLOWWATERS3),
             text: text.to_string(),
         });
         self
@@ -69,9 +69,17 @@ impl Log {
         });
         self
     }
+
+    pub fn very_bad<S: ToString>(mut self, text: &S) -> Self {
+        self.fragments.push(LogFragment {
+            color: c(RED1),
+            text: text.to_string(),
+        });
+        self
+    }
     pub fn roll<S: ToString>(mut self, text: &S) -> Self {
         self.fragments.push(LogFragment {
-            color: c(BLUE1),
+            color: c(SHALLOWWATERS5),
             text: text.to_string(),
         });
         self

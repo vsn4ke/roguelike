@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use bracket_lib::terminal::Point;
 use specs::prelude::*;
 use specs_derive::*;
@@ -56,7 +54,29 @@ pub struct EntityMoved {}
 pub struct Attribute {
     pub base: i32,
     pub modifiers: i32,
-    pub bonus: i32,
+}
+
+impl Attribute {
+    pub fn new(base: i32) -> Self {
+        Self { base, modifiers: 0 }
+    }
+
+    pub fn bonus(self) -> i32 {
+        (self.total() - 10) / 2
+    }
+
+    pub fn total(self) -> i32 {
+        self.base + self.modifiers
+    }
+}
+
+impl Default for Attribute {
+    fn default() -> Self {
+        Self {
+            base: 11,
+            modifiers: 0,
+        }
+    }
 }
 
 #[derive(Component, Clone, Copy)]
@@ -65,18 +85,90 @@ pub struct Attributes {
     pub fitness: Attribute,
     pub quickness: Attribute,
     pub intelligence: Attribute,
+    pub level: i32,
+
+    pub total_weight: f32,
+    pub total_initiative_penalty: f32,
+}
+
+impl Attributes {
+    pub fn new(
+        might: Attribute,
+        fitness: Attribute,
+        quickness: Attribute,
+        intelligence: Attribute,
+        level: i32,
+    ) -> Self {
+        Self {
+            might,
+            fitness,
+            quickness,
+            intelligence,
+            level,
+            total_weight: 0.0,
+            total_initiative_penalty: 0.0,
+        }
+    }
+    pub fn player_hp(self) -> i32 {
+        10 + (10 + self.fitness.bonus()) * self.level
+    }
+
+    pub fn npc_hp(self) -> i32 {
+        1 + i32::max(1, 8 + self.fitness.bonus()) * self.level
+    }
+
+    pub fn total_mana(self) -> i32 {
+        i32::max(1, 4 + self.intelligence.bonus()) * self.level
+    }
+
+    pub fn max_weight(self) -> f32 {
+        self.might.total() as f32 * 2.5
+    }
+
+    pub fn initiative_bonus(self) -> i32 {
+        f32::floor(self.total_initiative_penalty) as i32 - self.quickness.bonus()
+    }
+}
+
+impl Default for Attributes {
+    fn default() -> Self {
+        Self {
+            might: Attribute::default(),
+            fitness: Attribute::default(),
+            quickness: Attribute::default(),
+            intelligence: Attribute::default(),
+            level: 1,
+            total_weight: 0.0,
+            total_initiative_penalty: 0.0,
+        }
+    }
 }
 
 #[derive(Component)]
 pub struct Skills {
-    pub skills: HashMap<Skill, i32>,
+    pub melee: i32,
+    pub magic: i32,
+    pub defense: i32,
 }
 
-#[derive(Hash, PartialEq, Eq)]
-pub enum Skill {
-    Melee,
-    Defense,
-    Magic,
+impl Skills {
+    pub fn new(melee: i32, magic: i32, defense: i32) -> Self {
+        Self {
+            melee,
+            magic,
+            defense,
+        }
+    }
+}
+
+impl Default for Skills {
+    fn default() -> Self {
+        Self {
+            melee: 0,
+            magic: 0,
+            defense: 0,
+        }
+    }
 }
 
 #[derive(Component)]
@@ -85,12 +177,38 @@ pub struct Pool {
     pub current: i32,
 }
 
+impl Pool {
+    pub fn new(value: i32) -> Self {
+        Self {
+            max: value,
+            current: value,
+        }
+    }
+}
+
 #[derive(Component)]
 pub struct Pools {
     pub hit_points: Pool,
     pub mana: Pool,
     pub xp: i32,
-    pub level: i32,
+}
+
+impl Pools {
+    pub fn new_npc(attr: Attributes) -> Self {
+        Self {
+            xp: 0,
+            hit_points: Pool::new(attr.npc_hp()),
+            mana: Pool::new(attr.total_mana()),
+        }
+    }
+
+    pub fn new_player(attr: Attributes) -> Self {
+        Self {
+            xp: 0,
+            hit_points: Pool::new(attr.player_hp()),
+            mana: Pool::new(attr.total_mana()),
+        }
+    }
 }
 
 #[derive(Component)]

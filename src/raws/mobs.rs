@@ -1,10 +1,9 @@
 use super::{
     super::colors::c,
-    bonus_from_attribute, npc_hp,
     rawmaster::{get_renderable_component, spawn_position},
-    spawn_named_entity, total_mana, Attribute, Attributes, BlocksTile, Entity, Faction, Initiative,
-    LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack, NaturalProperty, Pool,
-    Pools, Quips, RawMaster, RenderableRaw, Skill, Skills, SpawnType, Viewshed,
+    spawn_named_entity, Attribute, Attributes, BlocksTile, Entity, EquipmentChanged, Faction,
+    Initiative, LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack,
+    NaturalProperty, Pools, Quips, RawMaster, RenderableRaw, Skills, SpawnType, Viewshed,
 };
 use bracket_lib::random::parse_dice_string;
 use serde::Deserialize;
@@ -93,6 +92,7 @@ pub fn spawn_named_mob(
     eb = eb.with(MovementMode {
         mode: match mob_template.movement.as_ref() {
             "random" => Movement::Random,
+            "waypoint" => Movement::Waypoint{ path: None },
             _ => Movement::Static,
         },
     });
@@ -103,100 +103,43 @@ pub fn spawn_named_mob(
         })
     }
 
-    let mut attr = Attributes {
-        might: Attribute {
-            base: 11,
-            modifiers: 0,
-            bonus: 0,
-        },
-        fitness: Attribute {
-            base: 11,
-            modifiers: 0,
-            bonus: 0,
-        },
-        quickness: Attribute {
-            base: 11,
-            modifiers: 0,
-            bonus: 0,
-        },
-        intelligence: Attribute {
-            base: 11,
-            modifiers: 0,
-            bonus: 0,
-        },
-    };
+    let mut attr = Attributes::default();
 
     if let Some(might) = mob_template.attributes.might {
-        attr.might = Attribute {
-            base: might,
-            modifiers: 0,
-            bonus: bonus_from_attribute(might),
-        }
+        attr.might = Attribute::new(might);
     }
 
     if let Some(fitness) = mob_template.attributes.fitness {
-        attr.fitness = Attribute {
-            base: fitness,
-            modifiers: 0,
-            bonus: bonus_from_attribute(fitness),
-        }
+        attr.fitness = Attribute::new(fitness);
     }
 
     if let Some(quickness) = mob_template.attributes.quickness {
-        attr.quickness = Attribute {
-            base: quickness,
-            modifiers: 0,
-            bonus: bonus_from_attribute(quickness),
-        }
+        attr.quickness = Attribute::new(quickness);
     }
 
     if let Some(intelligence) = mob_template.attributes.intelligence {
-        attr.intelligence = Attribute {
-            base: intelligence,
-            modifiers: 0,
-            bonus: bonus_from_attribute(intelligence),
-        }
+        attr.intelligence = Attribute::new(intelligence)
     }
+
+    attr.level = mob_template.level.unwrap_or(1);
 
     eb = eb.with(attr);
 
-    let mob_level = mob_template.level.unwrap_or(1);
-    let mob_hp = npc_hp(attr.fitness.base, mob_level);
-    let mob_mana = total_mana(attr.intelligence.base, mob_level);
+    eb = eb.with(Pools::new_npc(attr));
 
-    let pools = Pools {
-        level: mob_level,
-        xp: 0,
-        hit_points: Pool {
-            max: mob_hp,
-            current: mob_hp,
-        },
-        mana: Pool {
-            max: mob_mana,
-            current: mob_mana,
-        },
-    };
-
-    eb = eb.with(pools);
-
-    let mut skills = Skills {
-        skills: HashMap::new(),
-    };
-    skills.skills.insert(Skill::Melee, 1);
-    skills.skills.insert(Skill::Defense, 1);
-    skills.skills.insert(Skill::Magic, 1);
+    let mut skills = Skills::default();
 
     if let Some(mobskills) = &mob_template.skills {
         for s in mobskills.iter() {
             match s.0.as_str() {
                 "Melee" => {
-                    skills.skills.insert(Skill::Melee, *s.1);
+                    skills.melee = *s.1;
                 }
                 "Magic" => {
-                    skills.skills.insert(Skill::Melee, *s.1);
+                    skills.magic = *s.1;
                 }
                 "Defense" => {
-                    skills.skills.insert(Skill::Melee, *s.1);
+                    skills.defense = *s.1;
                 }
                 _ => println!("Unknown skill : {}", s.0),
             }
@@ -245,8 +188,10 @@ pub fn spawn_named_mob(
         name: mob_template
             .faction
             .clone()
-            .unwrap_or("Mindless".to_string()),
+            .unwrap_or_else(|| "Mindless".to_string()),
     });
+
+    eb = eb.with(EquipmentChanged {});
 
     //Mob Equippement
     let mob = eb.build();

@@ -1,6 +1,7 @@
 use super::super::{
     action::{WantsToApproach, WantsToFlee, WantsToMelee},
     effect::Confusion,
+    item::{EquipmentChanged, Equipped, InBackpack, Item},
     map::{
         spatial::{get_content, is_blocked, move_entity},
         Map,
@@ -10,16 +11,19 @@ use super::super::{
         RAWS,
     },
     state::RunState,
-    unit::{EntityMoved, Faction, Movement, MovementMode, MyTurn, Quips, Viewshed, Chasing},
-    Log, Name, Position, 
+    unit::{
+        Attributes, Chasing, EntityMoved, Faction, Movement, MovementMode, MyTurn, Quips, Viewshed,
+    },
+    Log, Name, Position,
 };
 
 pub mod adjacent;
 pub mod approaching;
+pub mod chase;
 pub mod default;
+pub mod encumbrance;
 pub mod fleeing;
 pub mod initiative;
 pub mod quipping;
 pub mod turn_status;
 pub mod visible;
-pub mod chase;

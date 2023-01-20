@@ -10,13 +10,11 @@ const MAX_SPAWNS: i32 = 6;
 
 use super::{
     colors::*,
-    gamesystem::{player_hp, total_mana},
+    item::EquipmentChanged,
     map::{tiles::Surface, Map},
     props::LightSource,
     raws::{spawn_named_entity, spawn_table::get_spawn_table_for_depth, SpawnType, RAWS},
-    unit::{
-        Attribute, Attributes, Faction, Initiative, Player, Pool, Pools, Skill, Skills, Viewshed,
-    },
+    unit::{Attributes, Faction, Initiative, Player, Pools, Skills, Viewshed},
     Name, Position, Renderable,
 };
 
@@ -83,12 +81,7 @@ pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
 }
 
 pub fn build_player_entity(ecs: &mut World, x: i32, y: i32) -> Entity {
-    let mut skills = Skills {
-        skills: HashMap::new(),
-    };
-    skills.skills.insert(Skill::Defense, 1);
-    skills.skills.insert(Skill::Melee, 1);
-    skills.skills.insert(Skill::Magic, 1);
+    let attributes = Attributes::default();
 
     let player = ecs
         .create_entity()
@@ -102,41 +95,9 @@ pub fn build_player_entity(ecs: &mut World, x: i32, y: i32) -> Entity {
         .with(Player {})
         .with(Viewshed::new(8))
         .with(Name::new("Player"))
-        .with(Attributes {
-            might: Attribute {
-                base: 11,
-                modifiers: 0,
-                bonus: 0,
-            },
-            fitness: Attribute {
-                base: 11,
-                modifiers: 0,
-                bonus: 0,
-            },
-            quickness: Attribute {
-                base: 11,
-                modifiers: 0,
-                bonus: 0,
-            },
-            intelligence: Attribute {
-                base: 11,
-                modifiers: 0,
-                bonus: 0,
-            },
-        })
-        .with(Pools {
-            hit_points: Pool {
-                current: player_hp(11, 1),
-                max: player_hp(11, 1),
-            },
-            mana: Pool {
-                current: total_mana(11, 1),
-                max: total_mana(11, 1),
-            },
-            xp: 0,
-            level: 1,
-        })
-        .with(skills)
+        .with(attributes)
+        .with(Pools::new_player(attributes))
+        .with(Skills::new(1, 1, 1))
         .with(LightSource {
             color: c(YELLOW5),
             range: 8,
@@ -145,6 +106,7 @@ pub fn build_player_entity(ecs: &mut World, x: i32, y: i32) -> Entity {
         .with(Faction {
             name: "Player".to_string(),
         })
+        .with(EquipmentChanged {})
         .build();
 
     spawn_named_entity(

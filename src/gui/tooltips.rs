@@ -1,7 +1,7 @@
 use super::super::{
     camera::get_screen_bounds,
     colors::*,
-    unit::{Attributes, Pools},
+    unit::Attributes,
     Hidden, Map, Name, Position,
 };
 use bracket_lib::prelude::Algorithm2D;
@@ -59,7 +59,6 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut BTerm) {
     let positions = ecs.read_storage::<Position>();
     let hidden = ecs.read_storage::<Hidden>();
     let attributes = ecs.read_storage::<Attributes>();
-    let pools = ecs.read_storage::<Pools>();
     let entities = ecs.entities();
     let (min_x, _, min_y, _) = get_screen_bounds(*player_pos);
 
@@ -80,28 +79,28 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut BTerm) {
 
             if let Some(attribute) = attributes.get(entity) {
                 let mut s = "".to_string();
-                if attribute.might.bonus < 0 {
+                if attribute.might.bonus() < 0 {
                     s += "Weak. "
                 }
-                if attribute.might.bonus > 0 {
+                if attribute.might.bonus() > 0 {
                     s += "Strong. "
                 }
-                if attribute.quickness.bonus < 0 {
+                if attribute.quickness.bonus() < 0 {
                     s += "Clumsy. "
                 }
-                if attribute.quickness.bonus > 0 {
+                if attribute.quickness.bonus() > 0 {
                     s += "Agile. "
                 }
-                if attribute.fitness.bonus < 0 {
+                if attribute.fitness.bonus() < 0 {
                     s += "Unhealthy. "
                 }
-                if attribute.fitness.bonus > 0 {
+                if attribute.fitness.bonus() > 0 {
                     s += "Healthy. "
                 }
-                if attribute.intelligence.bonus < 0 {
+                if attribute.intelligence.bonus() < 0 {
                     s += "Dumb. "
                 }
-                if attribute.intelligence.bonus > 0 {
+                if attribute.intelligence.bonus() > 0 {
                     s += "Smart. "
                 }
 
@@ -109,10 +108,8 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut BTerm) {
                     s = "Quite Average".to_string();
                 }
                 tip.add(s);
-            }
 
-            if let Some(stat) = pools.get(entity) {
-                tip.add(format!("Level: {}", stat.level));
+                tip.add(format!("Level: {}", attribute.level));
             }
 
             tip_boxes.push(tip);

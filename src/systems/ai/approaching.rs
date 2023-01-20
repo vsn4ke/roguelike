@@ -11,7 +11,7 @@ impl<'a> System<'a> for ApproachAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, WantsToApproach>,
         WriteStorage<'a, Position>,
-        WriteExpect<'a, Map>,
+        ReadExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
@@ -22,7 +22,7 @@ impl<'a> System<'a> for ApproachAI {
             mut turns,
             mut want_approach,
             mut positions,
-            mut map,
+            map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -42,7 +42,7 @@ impl<'a> System<'a> for ApproachAI {
             let path = a_star_search(
                 map.coord_to_index(pos.x, pos.y),
                 map.coord_to_index(approach.idx % map.width, approach.idx / map.width),
-                &mut *map,
+                &*map,
             );
             if path.success && path.steps.len() > 1 {
                 let idx = map.coord_to_index(pos.x, pos.y);

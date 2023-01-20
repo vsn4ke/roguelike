@@ -9,7 +9,7 @@ pub enum CheatMenuResult {
 pub fn show_cheat_menu(ctx: &mut BTerm) -> CheatMenuResult {
     let count = 2;
     let y = 25 - count / 2;
-    ctx.draw_box(15, y - 2, 31, (count + 3) as i32, c(WHITE), c(BLACK));
+    ctx.draw_box(15, y - 2, 31, count + 3, c(WHITE), c(BLACK));
     ctx.print_color(18, y - 2, c(YELLOW1), c(BLACK), "Cheating!");
     ctx.print_color(18, y + count + 1, c(YELLOW1), c(BLACK), "ESCAPE to cancel");
 

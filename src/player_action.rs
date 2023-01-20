@@ -75,18 +75,16 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
                 ppos.y = pos.y;
 
                 result = RunState::Ticking;
-            } else {
-                if combat_stats.get(*potential_target).is_some() {
-                    wants_to_melee
-                        .insert(
-                            entity,
-                            WantsToMelee {
-                                target: *potential_target,
-                            },
-                        )
-                        .expect("Add target failed");
-                    return RunState::Ticking;
-                }
+            } else if combat_stats.get(*potential_target).is_some() {
+                wants_to_melee
+                    .insert(
+                        entity,
+                        WantsToMelee {
+                            target: *potential_target,
+                        },
+                    )
+                    .expect("Add target failed");
+                return RunState::Ticking;
             }
 
             if let Some(door) = doors.get_mut(*potential_target) {

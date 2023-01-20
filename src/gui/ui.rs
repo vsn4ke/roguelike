@@ -51,8 +51,8 @@ fn draw_attribute(name: &str, attribute: &Attribute, y: i32, ctx: &mut BTerm) {
         bg,
         &format!("{}", attribute.base + attribute.modifiers),
     );
-    ctx.print_color(73, y, color, bg, &format!("{}", attribute.bonus));
-    if attribute.bonus > 0 {
+    ctx.print_color(73, y, color, bg, &format!("{}", attribute.bonus()));
+    if attribute.bonus() > 0 {
         ctx.set(72, y, color, bg, to_cp437('+'));
     }
 }
@@ -125,9 +125,32 @@ pub fn draw_ui(ecs: &World, ctx: &mut BTerm) {
     draw_attribute("Fitness: ", &attribute.fitness, 6, ctx);
     draw_attribute("Intelligence: ", &attribute.intelligence, 7, ctx);
 
+    // Initiative and weight
+    ctx.print_color(
+        50,
+        9,
+        c(WHITE),
+        bg,
+        &format!(
+            "{:.0} kg ({:.0} kg max)",
+            attribute.total_weight,
+            (attribute.might.base + attribute.might.modifiers) as f32 * 1.5
+        ),
+    );
+    ctx.print_color(
+        50,
+        10,
+        c(WHITE),
+        bg,
+        &format!(
+            "Initiative Penalty: {:.0}",
+            attribute.total_initiative_penalty
+        ),
+    );
+
     //Right
     // Equipped
-    let mut y = 9;
+    let mut y = 14;
     let equipped = ecs.read_storage::<Equipped>();
     let name = ecs.read_storage::<Name>();
     for (equipped_by, item_name) in (&equipped, &name).join() {

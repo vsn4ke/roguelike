@@ -1,8 +1,7 @@
 use super::{
-    super::{colors::*, gamesystem::skill_bonus},
-    particle::ParticleBuilder,
-    Attributes, EquipmentSlot, Equipped, Log, MeleeWeapon, Name, NaturalProperty, Pools, Position,
-    Skill, Skills, SufferDamage, WantsToMelee, Wearable,
+    super::colors::*, particle::ParticleBuilder, Attributes, EquipmentSlot, Equipped, Log,
+    MeleeWeapon, Name, NaturalProperty, Pools, Position, Skills, SufferDamage, WantsToMelee,
+    Wearable,
 };
 use bracket_lib::{random::RandomNumberGenerator, terminal::to_cp437};
 use specs::prelude::*;
@@ -87,9 +86,9 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 }
             }
 
-            let hit_bonus_from_attribute = source_attributes.might.bonus;
+            let hit_bonus_from_attribute = source_attributes.might.bonus();
             let hit_bonus_from_weapon = attack.hit_bonus;
-            let hit_bonus_from_skill = skill_bonus(Skill::Melee, source_skills);
+            let hit_bonus_from_skill = source_skills.melee;
 
             let hit_roll = natural_roll
                 + hit_bonus_from_attribute
@@ -102,8 +101,8 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 10
             };
 
-            let armor_bonus_from_quickness = target_attributes.quickness.bonus;
-            let armor_bonus_from_skill = skill_bonus(Skill::Defense, target_skills);
+            let armor_bonus_from_quickness = target_attributes.quickness.bonus();
+            let armor_bonus_from_skill = target_skills.defense;
             let mut armor_bonus_from_item = 0;
 
             for (wielded, armor) in (&equipped_items, &wearables).join() {
@@ -119,8 +118,8 @@ impl<'a> System<'a> for MeleeCombatSystem {
 
             if natural_roll > 1 && (natural_roll == 20 || hit_roll >= armor_class_total) {
                 let base_damage = rng.roll_dice(attack.damage_n_dice, attack.damage_die_type);
-                let bonus_damage_from_attribute = source_attributes.might.bonus;
-                let bonus_damage_from_skill = skill_bonus(Skill::Melee, source_skills);
+                let bonus_damage_from_attribute = source_attributes.might.bonus();
+                let bonus_damage_from_skill = source_skills.melee;
                 let bonus_damage_from_weapon = attack.damage_bonus;
 
                 let damage_total = i32::max(

@@ -50,7 +50,7 @@ impl super::MetaMapBuilder for ForestRoad {
 
         let mut rng = RandomNumberGenerator::new();
 
-        let stream_idx = if path.steps.len() > 0 {
+        let stream_idx = if !path.steps.is_empty() {
             path.steps[path.steps.len() * 4 / 5]
         } else {
             random_valid_points_finder(&X::Right, &Y::Center, data)

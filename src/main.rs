@@ -4,7 +4,6 @@ use specs::prelude::*;
 pub mod camera;
 pub mod colors;
 pub mod components;
-pub mod gamesystem;
 pub mod gui;
 pub mod logger;
 pub mod map;
@@ -99,6 +98,7 @@ fn main() {
     gs.ecs.register::<item::Equipped>();
     gs.ecs.register::<item::MeleeWeapon>();
     gs.ecs.register::<item::Wearable>();
+    gs.ecs.register::<item::EquipmentChanged>();
     gs.ecs.register::<effect::ProvidesHealing>();
     gs.ecs.register::<effect::Ranged>();
     gs.ecs.register::<effect::EntryTrigger>();

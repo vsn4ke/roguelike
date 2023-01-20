@@ -1,8 +1,8 @@
 use super::{
     super::colors::*, particle::ParticleBuilder, spatial::get_content, AreaOfEffect, Confusion,
-    Consumable, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Name, Pools, Position,
-    ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
-    WantsToUseItem,
+    Consumable, EquipmentChanged, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Name,
+    Pools, Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem,
+    WantsToRemoveItem, WantsToUseItem,
 };
 use bracket_lib::{
     prelude::{field_of_view, Algorithm2D},
@@ -20,10 +20,11 @@ impl<'a> System<'a> for ItemCollectionSystem {
         WriteStorage<'a, Position>,
         ReadStorage<'a, Name>,
         WriteStorage<'a, InBackpack>,
+        WriteStorage<'a, EquipmentChanged>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (player_entity, mut wants_pickup, mut positions, names, mut backpack) = data;
+        let (player_entity, mut wants_pickup, mut positions, names, mut backpack, mut dirty) = data;
 
         for pickup in wants_pickup.join() {
             positions.remove(pickup.item);
@@ -35,7 +36,9 @@ impl<'a> System<'a> for ItemCollectionSystem {
                     },
                 )
                 .expect("Unable to insert backpack");
-
+            dirty
+                .insert(pickup.collected_by, EquipmentChanged {})
+                .expect("Unable to insert EquipmentChanged");
             if pickup.collected_by == *player_entity {
                 Log::new()
                     .append("You pick up the")
@@ -69,6 +72,7 @@ impl<'a> System<'a> for ItemUseSystem {
         WriteStorage<'a, InBackpack>,
         WriteExpect<'a, ParticleBuilder>,
         ReadStorage<'a, Position>,
+        WriteStorage<'a, EquipmentChanged>,
     );
 
     #[allow(clippy::cognitive_complexity)]
@@ -91,11 +95,15 @@ impl<'a> System<'a> for ItemUseSystem {
             mut backpack,
             mut particle_builder,
             positions,
+            mut dirty,
         ) = data;
 
         for (entity, useitem) in (&entities, &wants_use).join() {
             let mut used_item = true;
             let mut targets: Vec<Entity> = Vec::new();
+            dirty
+                .insert(entity, EquipmentChanged {})
+                .expect("Unable to insert EquipmentChanged");
             if let Some(target) = useitem.target {
                 //AoE
                 if let Some(aoe) = area_of_effect.get(useitem.item) {
@@ -293,10 +301,19 @@ impl<'a> System<'a> for ItemDropSystem {
         ReadStorage<'a, Name>,
         WriteStorage<'a, Position>,
         WriteStorage<'a, InBackpack>,
+        WriteStorage<'a, EquipmentChanged>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (player_entity, entities, mut want_drops, names, mut positions, mut backpack) = data;
+        let (
+            player_entity,
+            entities,
+            mut want_drops,
+            names,
+            mut positions,
+            mut backpack,
+            mut dirty,
+        ) = data;
 
         for (entity, to_drop) in (&entities, &want_drops).join() {
             let dropped_pos = positions.get(entity).unwrap();
@@ -311,6 +328,10 @@ impl<'a> System<'a> for ItemDropSystem {
                 )
                 .expect("Unable to insert positions");
             backpack.remove(to_drop.item);
+
+            dirty
+                .insert(entity, EquipmentChanged {})
+                .expect("Unable to insert EquipmentChanged");
 
             if entity == *player_entity {
                 Log::new()

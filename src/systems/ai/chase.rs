@@ -12,22 +12,15 @@ impl<'a> System<'a> for ChaseAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, Chasing>,
         WriteStorage<'a, Position>,
-        WriteExpect<'a, Map>,
+        ReadExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            mut turns,
-            mut chasing,
-            mut positions,
-            mut map,
-            mut viewsheds,
-            mut entity_moved,
-            entities,
-        ) = data;
+        let (mut turns, mut chasing, mut positions, map, mut viewsheds, mut entity_moved, entities) =
+            data;
 
         let mut targets: HashMap<Entity, (i32, i32)> = HashMap::new();
         let mut end_chase: Vec<Entity> = Vec::new();
@@ -55,7 +48,7 @@ impl<'a> System<'a> for ChaseAI {
             let path = a_star_search(
                 map.coord_to_index(pos.x, pos.y) as i32,
                 map.coord_to_index(target_pos.0, target_pos.1) as i32,
-                &mut *map,
+                &*map,
             );
             if path.success && path.steps.len() > 1 && path.steps.len() < 15 {
                 let idx = map.coord_to_index(pos.x, pos.y);
