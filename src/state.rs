@@ -10,12 +10,14 @@ use super::{
         tooltips::draw_tooltips,
         ui::draw_ui,
     },
+    item::Item,
     map::{
         master::level_transition,
         master::{freeze_level_entities, unfreeze_level_entities, MasterMap},
         Map,
     },
     player_action::input,
+    raws::{items::spawn_named_item, SpawnType, RAWS},
     spawner::build_player_entity,
     systems::{
         ai::{
@@ -32,7 +34,8 @@ use super::{
         trigger::TriggerSystem,
         visibility::VisibilitySystem,
     },
-    First, Log, SHOW_MAPGEN_VISUALIZER, FIRST_LEVEL,
+    unit::{Pools, VendorMode},
+    First, Log, FIRST_LEVEL, SHOW_MAPGEN_VISUALIZER,
 };
 
 use bracket_lib::terminal::{BTerm, GameState};
@@ -53,6 +56,7 @@ pub enum RunState {
     PreviousLevel,
     ShowCheatMenu,
     Ticking,
+    ShowVendor { vendor: Entity, mode: VendorMode },
 }
 
 pub fn new_dispatcher() -> Dispatcher<'static, 'static> {
@@ -173,7 +177,7 @@ impl GameState for State {
                 }
             }
             RunState::ShowInventory => {
-                let result = show_inventory(self, ctx);
+                let result = show_item_menu(self, ctx, ItemMenuType::Use);
                 match result.0 {
                     ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
                     ItemMenuResult::NoResponse => {}
@@ -202,7 +206,7 @@ impl GameState for State {
                 }
             }
             RunState::ShowDropItem => {
-                let result = drop_item_menu(self, ctx);
+                let result = show_item_menu(self, ctx, ItemMenuType::Drop);
                 match result.0 {
                     ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
                     ItemMenuResult::NoResponse => {}
@@ -323,12 +327,60 @@ impl GameState for State {
                     newrunstate = RunState::MapGeneration;
                 }
             },
-        }
-        {
-            let mut runwriter = self.ecs.write_resource::<RunState>();
-            *runwriter = newrunstate;
+            RunState::ShowVendor { vendor, mode } => {
+                let result = show_vendor_menu(self, ctx, vendor, mode);
+                match result.0 {
+                    VendorResult::Cancel => newrunstate = RunState::AwaitingInput,
+                    VendorResult::NoResponse => {}
+                    VendorResult::Sell => {
+                        let price = self
+                            .ecs
+                            .read_storage::<Item>()
+                            .get(result.1.unwrap())
+                            .unwrap()
+                            .base_value;
+                        self.ecs
+                            .write_storage::<Pools>()
+                            .get_mut(*self.ecs.fetch::<Entity>())
+                            .unwrap()
+                            .money += price;
+                        self.ecs
+                            .delete_entity(result.1.unwrap())
+                            .expect("Unable to delete");
+                    }
+                    VendorResult::Buy => {
+                        let price = result.3.unwrap();
+                        let mut pools = self.ecs.write_storage::<Pools>();
+                        let player_pools = pools.get_mut(*self.ecs.fetch::<Entity>()).unwrap();
+                        if player_pools.money >= price {
+                            player_pools.money -= price;
+                            std::mem::drop(pools);
+                            let player_entity = *self.ecs.fetch::<Entity>();
+                            spawn_named_item(
+                                &RAWS.lock().unwrap(),
+                                &mut self.ecs,
+                                &result.2.unwrap(),
+                                SpawnType::Carried { by: player_entity },
+                            );
+                        }
+                    }
+                    VendorResult::BuyMode => {
+                        newrunstate = RunState::ShowVendor {
+                            vendor,
+                            mode: VendorMode::Buy,
+                        }
+                    }
+                    VendorResult::SellMode => {
+                        newrunstate = RunState::ShowVendor {
+                            vendor,
+                            mode: VendorMode::Sell,
+                        }
+                    }
+                }
+            }
         }
 
+        *self.ecs.write_resource::<RunState>() = newrunstate;
         delete_the_deads(&mut self.ecs);
     }
 }

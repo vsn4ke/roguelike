@@ -258,3 +258,14 @@ pub struct MovementMode {
 pub struct Chasing {
     pub target: Entity,
 }
+
+#[derive(Component)]
+pub struct Vendor {
+    pub categories: Vec<String>,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum VendorMode {
+    Buy,
+    Sell,
+}

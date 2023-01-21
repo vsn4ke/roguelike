@@ -901,6 +901,7 @@ dependencies = [
  "bracket-terminal",
  "lazy_static",
  "rand",
+ "regex",
  "serde",
  "serde_json",
  "specs",

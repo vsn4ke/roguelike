@@ -10,7 +10,7 @@ use super::{
         RAWS,
     },
     state::{RunState, State},
-    unit::{Attributes, EntityMoved, Faction, Player, Viewshed},
+    unit::{Attributes, EntityMoved, Faction, Player, Vendor, VendorMode, Viewshed},
     BlocksVisibility, Log, Map, Position, Renderable,
 };
 use bracket_lib::{
@@ -32,6 +32,7 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
     let mut doors = ecs.write_storage::<Door>();
     let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
     let mut renderables = ecs.write_storage::<Renderable>();
+    let vendors = ecs.read_storage::<Vendor>();
 
     let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
     let mut result = RunState::AwaitingInput;
@@ -47,9 +48,8 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
         for potential_target in map.tiles[dest_idx].content.clone().iter() {
             if combat_stats.get(*potential_target).is_some() {
                 if let Some(faction) = factions.get(*potential_target) {
-                    if faction_reaction(&faction.name, "Player", &RAWS.lock().unwrap())
-                        == Reaction::Attack
-                    {
+                    let reaction = faction_reaction(&faction.name, "Player", &RAWS.lock().unwrap());
+                    if reaction == Reaction::Attack || reaction == Reaction::Flee {
                         wants_to_melee
                             .insert(
                                 entity,
@@ -59,22 +59,15 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
                             )
                             .expect("Add target failed");
                         return RunState::Ticking;
-                    } else {
-                        swap_entities.push((*potential_target, pos.x, pos.y));
-                        pos.x = (new.x).clamp(0, map.width - 1);
-                        pos.y = (new.y).clamp(0, map.height - 1);
-                        entity_moved
-                            .insert(entity, EntityMoved {})
-                            .expect("Unable to insert marker");
-                        viewshed.dirty = true;
-
-                        let mut ppos = ecs.write_resource::<Point>();
-                        ppos.x = pos.x;
-                        ppos.y = pos.y;
-
-                        result = RunState::Ticking;
                     }
                 }
+            }
+
+            if vendors.get(*potential_target).is_some() {
+                return RunState::ShowVendor {
+                    vendor: *potential_target,
+                    mode: VendorMode::Sell,
+                };
             }
 
             if let Some(door) = doors.get_mut(*potential_target) {
@@ -82,33 +75,50 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
                 blocks_visibility.remove(*potential_target);
 
                 map.blocks_movement(dest_idx, false);
-                let r = renderables.get_mut(*potential_target).unwrap();
-                r.glyph = to_cp437('/');
+                renderables.get_mut(*potential_target).unwrap().glyph = to_cp437('/');
                 viewshed.dirty = true;
+                result = RunState::Ticking;
+            } else {
+                swap_entities.push((*potential_target, pos.x, pos.y));
+                pos.x = (new.x).clamp(0, map.width - 1);
+                pos.y = (new.y).clamp(0, map.height - 1);
+                entity_moved
+                    .insert(entity, EntityMoved {})
+                    .expect("Unable to insert marker");
+                viewshed.dirty = true;
+
+                let mut ppos = ecs.write_resource::<Point>();
+                ppos.x = pos.x;
+                ppos.y = pos.y;
+
+                result = RunState::Ticking;
             }
         }
 
-        if !map.is_blocked(dest_idx) {
-            let mut ppos = ecs.write_resource::<Point>();
-            entity_moved
-                .insert(entity, EntityMoved {})
-                .expect("Unable to insert marker");
-            viewshed.dirty = true;
+        if map.is_blocked(dest_idx) {
+            continue;
+        }
 
-            let moving_from = map.coord_to_index(pos.x, pos.y);
-            pos.x = new.x.clamp(0, map.width - 1);
-            pos.y = new.y.clamp(0, map.height - 1);
-            let moving_to = map.coord_to_index(pos.x, pos.y);
+        let mut ppos = ecs.write_resource::<Point>();
+        entity_moved
+            .insert(entity, EntityMoved {})
+            .expect("Unable to insert marker");
+        viewshed.dirty = true;
 
-            map.move_entity(entity, moving_from, moving_to);
+        let moving_from = map.coord_to_index(pos.x, pos.y);
+        pos.x = new.x.clamp(0, map.width - 1);
+        pos.y = new.y.clamp(0, map.height - 1);
+        let moving_to = map.coord_to_index(pos.x, pos.y);
 
-            ppos.x = pos.x;
-            ppos.y = pos.y;
-            result = match map.tiles[dest_idx].surface {
-                Surface::DownStairs => RunState::NextLevel,
-                Surface::UpStairs => RunState::PreviousLevel,
-                _ => RunState::Ticking,
-            }
+        map.move_entity(entity, moving_from, moving_to);
+
+        ppos.x = pos.x;
+        ppos.y = pos.y;
+
+        result = match map.tiles[dest_idx].surface {
+            Surface::DownStairs => RunState::NextLevel,
+            Surface::UpStairs => RunState::PreviousLevel,
+            _ => RunState::Ticking,
         }
     }
 
@@ -127,15 +137,14 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
 }
 
 fn get_item(ecs: &mut World) {
-    let player_pos = ecs.fetch::<Point>();
+    let ppos = ecs.fetch::<Point>();
     let player_entity = ecs.fetch::<Entity>();
-    let entities = ecs.entities();
     let items = ecs.read_storage::<Item>();
     let positions = ecs.read_storage::<Position>();
 
     let mut target_item: Option<Entity> = None;
-    for (item_entity, _item, position) in (&entities, &items, &positions).join() {
-        if position.x == player_pos.x && position.y == player_pos.y {
+    for (item_entity, _, position) in (&ecs.entities(), &items, &positions).join() {
+        if position.x == ppos.x && position.y == ppos.y {
             target_item = Some(item_entity);
         }
     }
@@ -145,8 +154,7 @@ fn get_item(ecs: &mut World) {
             .append("There is nothing here to pick up.")
             .build(),
         Some(item) => {
-            let mut pickup = ecs.write_storage::<WantsToPickupItem>();
-            pickup
+            ecs.write_storage::<WantsToPickupItem>()
                 .insert(
                     *player_entity,
                     WantsToPickupItem {
@@ -218,27 +226,22 @@ fn use_consumable_hotkey(gs: &mut State, key: usize) -> RunState {
     let consumables = gs.ecs.read_storage::<Consumable>();
     let backpack = gs.ecs.read_storage::<InBackpack>();
     let player_entity = gs.ecs.fetch::<Entity>();
-    let entities = gs.ecs.entities();
-    let mut carried_consumables = Vec::new();
+    let mut carried = Vec::new();
 
-    for (entity, carried_by, _) in (&entities, &backpack, &consumables).join() {
+    for (entity, carried_by, _) in (&gs.ecs.entities(), &backpack, &consumables).join() {
         if carried_by.owner == *player_entity {
-            carried_consumables.push(entity);
+            carried.push(entity);
         }
     }
 
-    if key >= carried_consumables.len() {
+    if key >= carried.len() {
         return RunState::Ticking;
     }
 
-    if let Some(ranged) = gs
-        .ecs
-        .read_storage::<Ranged>()
-        .get(carried_consumables[key])
-    {
+    if let Some(ranged) = gs.ecs.read_storage::<Ranged>().get(carried[key]) {
         return RunState::ShowTargeting {
             range: ranged.range,
-            item: carried_consumables[key],
+            item: carried[key],
         };
     }
     gs.ecs
@@ -246,7 +249,7 @@ fn use_consumable_hotkey(gs: &mut State, key: usize) -> RunState {
         .insert(
             *player_entity,
             WantsToUseItem {
-                item: carried_consumables[key],
+                item: carried[key],
                 target: None,
             },
         )

@@ -1,11 +1,11 @@
 use super::{
     super::colors::c,
+    parse_dice_string,
     rawmaster::{get_renderable_component, spawn_position},
-    spawn_named_entity, Attribute, Attributes, BlocksTile, Entity, EquipmentChanged, Faction,
+    roll, spawn_named_entity, Attribute, Attributes, BlocksTile, Entity, EquipmentChanged, Faction,
     Initiative, LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack,
-    NaturalProperty, Pools, Quips, RawMaster, RenderableRaw, Skills, SpawnType, Viewshed,
+    NaturalProperty, Pools, Quips, RawMaster, RenderableRaw, Skills, SpawnType, Vendor, Viewshed,
 };
-use bracket_lib::random::{parse_dice_string, RandomNumberGenerator};
 use serde::Deserialize;
 use specs::prelude::*;
 use std::collections::HashMap;
@@ -29,6 +29,7 @@ pub struct MobRaw {
     pub light: Option<LightRaw>,
     pub faction: Option<String>,
     pub money: Option<String>,
+    pub vendor: Option<Vec<String>>,
 }
 
 #[derive(Deserialize)]
@@ -129,8 +130,7 @@ pub fn spawn_named_mob(
     let mut pools = Pools::new_npc(attr);
 
     if let Some(money) = &mob_template.money {
-        let mut rng = RandomNumberGenerator::new();
-        pools.money = rng.roll(parse_dice_string(money).unwrap());
+        pools.money = roll(money);
     }
 
     eb = eb.with(pools);
@@ -164,7 +164,7 @@ pub fn spawn_named_mob(
 
         if let Some(attacks) = &natural.attacks {
             for attack in attacks.iter() {
-                let dice = parse_dice_string(&attack.damage).unwrap();
+                let dice = parse_dice_string(&attack.damage);
                 natural_property.attacks.push(NaturalAttack {
                     name: attack.name.clone(),
                     hit_bonus: attack.hit_bonus,
@@ -200,6 +200,12 @@ pub fn spawn_named_mob(
     });
 
     eb = eb.with(EquipmentChanged {});
+
+    if let Some(vendor) = &mob_template.vendor {
+        eb = eb.with(Vendor {
+            categories: vendor.clone(),
+        });
+    }
 
     //Mob Equippement
     let mob = eb.build();

@@ -1,9 +1,9 @@
-use bracket_lib::random::parse_dice_string;
 use serde::Deserialize;
 use specs::prelude::*;
 use std::collections::HashMap;
 
 use super::{
+    parse_dice_string,
     rawmaster::{get_renderable_component, spawn_position},
     AreaOfEffect, Confusion, Consumable, EquipmentSlot, Equippable, InflictsDamage, Item,
     MeleeWeapon, Name, ProvidesHealing, Ranged, RawMaster, RenderableRaw, SpawnType,
@@ -20,6 +20,7 @@ pub struct ItemRaw {
     pub initiative_penalty: Option<f32>,
     pub weight: Option<f32>,
     pub value: Option<i32>,
+    pub vendor_category: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -112,7 +113,7 @@ pub fn spawn_named_item(
         eb = eb.with(Equippable {
             slot: EquipmentSlot::Melee,
         });
-        let dice = parse_dice_string(&weapon.base_damage).unwrap();
+        let dice = parse_dice_string(&weapon.base_damage);
 
         eb = eb.with(MeleeWeapon {
             attribute: match weapon.attribute.as_str() {
@@ -168,4 +169,18 @@ pub fn string_to_slot(slot: &str) -> EquipmentSlot {
             EquipmentSlot::Melee
         }
     }
+}
+
+pub fn get_vendor_items(categories: &[String], raws: &RawMaster) -> Vec<(String, i32)> {
+    let mut result: Vec<(String, i32)> = Vec::new();
+
+    for item in raws.raws.items.iter() {
+        if let Some(cat) = &item.vendor_category {
+            if categories.contains(cat) && item.value.is_some() {
+                result.push((item.name.clone(), item.value.unwrap()));
+            }
+        }
+    }
+
+    result
 }

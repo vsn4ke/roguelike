@@ -12,6 +12,7 @@ pub mod pathfinding;
 pub mod player_action;
 pub mod raws;
 pub mod rex_assets;
+pub mod rng;
 pub mod spawner;
 pub mod state;
 pub mod systems;
@@ -30,7 +31,7 @@ pub const CONSOLE_WIDTH: usize = 80;
 pub const CONSOLE_HEIGHT: usize = 60;
 const FPS_CAP: f32 = 30.0;
 const SHOW_MAPGEN_VISUALIZER: bool = false;
-const FIRST_LEVEL:i32 = 0;
+const FIRST_LEVEL: i32 = 0;
 
 pub struct First {
     run: bool,
@@ -85,6 +86,7 @@ fn main() {
     gs.ecs.register::<unit::Faction>();
     gs.ecs.register::<unit::MovementMode>();
     gs.ecs.register::<unit::Chasing>();
+    gs.ecs.register::<unit::Vendor>();
     gs.ecs.register::<action::WantsToMelee>();
     gs.ecs.register::<action::WantsToPickupItem>();
     gs.ecs.register::<action::WantsToUseItem>();
