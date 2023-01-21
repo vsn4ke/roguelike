@@ -30,6 +30,7 @@ pub const CONSOLE_WIDTH: usize = 80;
 pub const CONSOLE_HEIGHT: usize = 60;
 const FPS_CAP: f32 = 30.0;
 const SHOW_MAPGEN_VISUALIZER: bool = false;
+const FIRST_LEVEL:i32 = 0;
 
 pub struct First {
     run: bool,

@@ -1,21 +1,17 @@
-use crate::raws::{
-    factions::{faction_reaction, Reaction},
-    RAWS,
-};
-
 use super::{
     action::{WantsToMelee, WantsToPickupItem, WantsToUseItem},
     effect::Ranged,
     gui::menu::MainMenuSelection,
     item::{Consumable, InBackpack, Item},
-    map::{
-        spatial::{get_content, is_blocked, move_entity},
-        tiles::Surface,
-    },
+    map::tiles::Surface,
     props::Door,
+    raws::{
+        factions::{faction_reaction, Reaction},
+        RAWS,
+    },
     state::{RunState, State},
     unit::{Attributes, EntityMoved, Faction, Player, Viewshed},
-    BlocksTile, BlocksVisibility, Log, Map, Position, Renderable,
+    BlocksVisibility, Log, Map, Position, Renderable,
 };
 use bracket_lib::{
     prelude::Algorithm2D,
@@ -29,13 +25,12 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
     let mut viewsheds = ecs.write_storage::<Viewshed>();
     let mut entity_moved = ecs.write_storage::<EntityMoved>();
     let combat_stats = ecs.read_storage::<Attributes>();
-    let map = ecs.fetch::<Map>();
+    let mut map = ecs.fetch_mut::<Map>();
     let entities = ecs.entities();
     let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
     let factions = ecs.read_storage::<Faction>();
     let mut doors = ecs.write_storage::<Door>();
     let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
-    let mut blocks_movement = ecs.write_storage::<BlocksTile>();
     let mut renderables = ecs.write_storage::<Renderable>();
 
     let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
@@ -48,56 +43,52 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
             return result;
         }
 
-        let destination_idx = map.point2d_to_index(new);
-        for potential_target in get_content(destination_idx).iter() {
-            let mut hostile = true;
+        let dest_idx = map.point2d_to_index(new);
+        for potential_target in map.tiles[dest_idx].content.clone().iter() {
             if combat_stats.get(*potential_target).is_some() {
                 if let Some(faction) = factions.get(*potential_target) {
                     if faction_reaction(&faction.name, "Player", &RAWS.lock().unwrap())
-                        != Reaction::Attack
+                        == Reaction::Attack
                     {
-                        hostile = false;
+                        wants_to_melee
+                            .insert(
+                                entity,
+                                WantsToMelee {
+                                    target: *potential_target,
+                                },
+                            )
+                            .expect("Add target failed");
+                        return RunState::Ticking;
+                    } else {
+                        swap_entities.push((*potential_target, pos.x, pos.y));
+                        pos.x = (new.x).clamp(0, map.width - 1);
+                        pos.y = (new.y).clamp(0, map.height - 1);
+                        entity_moved
+                            .insert(entity, EntityMoved {})
+                            .expect("Unable to insert marker");
+                        viewshed.dirty = true;
+
+                        let mut ppos = ecs.write_resource::<Point>();
+                        ppos.x = pos.x;
+                        ppos.y = pos.y;
+
+                        result = RunState::Ticking;
                     }
                 }
-            }
-
-            if !hostile {
-                swap_entities.push((*potential_target, pos.x, pos.y));
-                pos.x = (new.x).clamp(0, map.width - 1);
-                pos.y = (new.y).clamp(0, map.height - 1);
-                entity_moved
-                    .insert(entity, EntityMoved {})
-                    .expect("Unable to insert marker");
-                viewshed.dirty = true;
-
-                let mut ppos = ecs.write_resource::<Point>();
-                ppos.x = pos.x;
-                ppos.y = pos.y;
-
-                result = RunState::Ticking;
-            } else if combat_stats.get(*potential_target).is_some() {
-                wants_to_melee
-                    .insert(
-                        entity,
-                        WantsToMelee {
-                            target: *potential_target,
-                        },
-                    )
-                    .expect("Add target failed");
-                return RunState::Ticking;
             }
 
             if let Some(door) = doors.get_mut(*potential_target) {
                 door.open = true;
                 blocks_visibility.remove(*potential_target);
-                blocks_movement.remove(*potential_target);
+
+                map.blocks_movement(dest_idx, false);
                 let r = renderables.get_mut(*potential_target).unwrap();
                 r.glyph = to_cp437('/');
                 viewshed.dirty = true;
             }
         }
 
-        if !is_blocked(destination_idx) {
+        if !map.is_blocked(dest_idx) {
             let mut ppos = ecs.write_resource::<Point>();
             entity_moved
                 .insert(entity, EntityMoved {})
@@ -109,11 +100,11 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
             pos.y = new.y.clamp(0, map.height - 1);
             let moving_to = map.coord_to_index(pos.x, pos.y);
 
-            move_entity(entity, moving_from, moving_to);
+            map.move_entity(entity, moving_from, moving_to);
 
             ppos.x = pos.x;
             ppos.y = pos.y;
-            result = match map.tiles[destination_idx].surface {
+            result = match map.tiles[dest_idx].surface {
                 Surface::DownStairs => RunState::NextLevel,
                 Surface::UpStairs => RunState::PreviousLevel,
                 _ => RunState::Ticking,
@@ -128,7 +119,7 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
             their_pos.y = m.2;
             let moving_to = map.coord_to_index(their_pos.x, their_pos.y);
 
-            move_entity(m.0, moving_from, moving_to);
+            map.move_entity(m.0, moving_from, moving_to);
         }
     }
 

@@ -6,8 +6,6 @@ use bracket_lib::{
     terminal::{DistanceAlg, Point, Rect},
 };
 
-use crate::map::spatial::is_blocked;
-
 use super::{BuilderChain, BuilderMap, Surface};
 
 #[derive(Debug)]
@@ -390,7 +388,7 @@ fn random_building_spawn(
         );
         let idx = data.map.point2d_to_index(p);
 
-        if idx != player_idx && !used_indexes.contains(&idx) && !is_blocked(idx) {
+        if idx != player_idx && !used_indexes.contains(&idx) && !data.map.is_blocked(idx) {
             used_indexes.push(idx);
             data.spawn_list
                 .push((idx, to_place.pop().unwrap().to_string()));
@@ -483,7 +481,7 @@ fn spawn_townsfolk(data: &mut BuilderMap, available_building_tiles: &mut HashSet
         let p = Point::new(rng.range(area.x1, area.x2), rng.range(area.y1, area.y2));
         let idx = data.map.point2d_to_index(p);
 
-        if !available_building_tiles.contains(&idx) && !is_blocked(idx) {
+        if !available_building_tiles.contains(&idx) && !data.map.is_blocked(idx) {
             let name = townsfolk[rng.range(0, townsfolk.len())].to_string();
             data.spawn_list.push((idx, name));
             available_building_tiles.remove(&idx);

@@ -32,7 +32,7 @@ use super::{
         trigger::TriggerSystem,
         visibility::VisibilitySystem,
     },
-    First, Log, SHOW_MAPGEN_VISUALIZER,
+    First, Log, SHOW_MAPGEN_VISUALIZER, FIRST_LEVEL,
 };
 
 use bracket_lib::terminal::{BTerm, GameState};
@@ -114,7 +114,7 @@ impl State {
 
         Log::clear();
         self.ecs.insert(MasterMap::new());
-        self.generate_world_map(0, 0);
+        self.generate_world_map(FIRST_LEVEL, 0);
     }
 
     fn goto_level(&mut self, offset: i32) {

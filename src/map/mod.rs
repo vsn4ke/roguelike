@@ -1,5 +1,4 @@
 pub mod master;
-pub mod spatial;
 pub mod themes;
 pub mod tiles;
 
@@ -15,6 +14,8 @@ use bracket_lib::{
     terminal::{DistanceAlg, Point, Rect, RGB},
 };
 
+use specs::prelude::*;
+
 #[derive(Clone)]
 pub struct Map {
     pub width: i32,
@@ -26,7 +27,7 @@ pub struct Map {
     pub outdoors: bool,
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct Tile {
     pub surface: Surface,
     pub revealed: bool,
@@ -34,6 +35,8 @@ pub struct Tile {
     pub block_visibility: bool,
     pub bloodstains: bool,
     pub light: RGB,
+    pub block_movement: bool,
+    pub content: Vec<Entity>,
 }
 
 impl Tile {
@@ -45,14 +48,21 @@ impl Tile {
             block_visibility: false,
             bloodstains: false,
             light: c(BLACK),
+            block_movement: true,
+            content: Vec::new(),
         }
+    }
+}
+
+impl Default for Tile {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
 impl Map {
     pub fn new<S: ToString>(depth: i32, width: i32, height: i32, name: S) -> Map {
         let tiles_count = (width * height) as usize;
-        spatial::set_size(tiles_count);
         Map {
             width,
             height,
@@ -60,7 +70,7 @@ impl Map {
             rooms: Vec::new(),
             name: name.to_string(),
             outdoors: true,
-            tiles: vec![Tile::new(); tiles_count],
+            tiles: vec![Tile::default(); tiles_count],
         }
     }
     pub fn coord_to_index(&self, x: i32, y: i32) -> usize {
@@ -68,15 +78,32 @@ impl Map {
     }
 
     fn is_exit_valid(&self, idx: usize) -> bool {
-        self.in_bounds(self.index_to_point2d(idx)) && !spatial::is_blocked(idx)
+        self.in_bounds(self.index_to_point2d(idx)) && !self.tiles[idx].block_movement
     }
 
-    pub fn populate_blocked(&self) {
-        spatial::populate_blocked_from_map(self);
+    pub fn populate_blocked(&mut self) {
+        for tile in self.tiles.iter_mut() {
+            tile.block_movement = !is_tile_walkable(tile.surface);
+        }
     }
 
-    pub fn clear_content(&self) {
-        spatial::clear_spatial_map();
+    pub fn blocks_movement(&mut self, idx: usize, blocks_movement: bool) {
+        self.tiles[idx].block_movement = blocks_movement;
+    }
+
+    pub fn is_blocked(&self, idx: usize) -> bool {
+        self.tiles[idx].block_movement
+    }
+
+    pub fn move_entity(&mut self, entity: Entity, moving_from: usize, moving_to: usize) {
+        for (i, e) in self.tiles[moving_from].content.clone().iter().enumerate() {
+            if *e == entity {
+                self.tiles[moving_from].content.remove(i);
+                self.tiles[moving_from].block_movement = false;
+            }
+        }
+        self.tiles[moving_to].content.push(entity);
+        self.tiles[moving_to].block_movement = true;
     }
 }
 

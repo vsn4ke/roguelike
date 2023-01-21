@@ -1,6 +1,4 @@
-use super::{
-    faction_reaction, get_content, Faction, Map, MyTurn, Position, Reaction, WantsToMelee, RAWS,
-};
+use super::{faction_reaction, Faction, Map, MyTurn, Position, Reaction, WantsToMelee, RAWS};
 use specs::prelude::*;
 
 pub struct AdjacentAI {}
@@ -32,10 +30,10 @@ impl<'a> System<'a> for AdjacentAI {
             let h = map.height;
 
             if pos.x > 0 {
-                evaluate(idx - 1, &factions, &my_faction.name, &mut reactions);
+                evaluate(idx - 1, &factions, &my_faction.name, &mut reactions, &map);
             }
             if pos.x < w - 1 {
-                evaluate(idx + 1, &factions, &my_faction.name, &mut reactions);
+                evaluate(idx + 1, &factions, &my_faction.name, &mut reactions, &map);
             }
             if pos.y > 0 {
                 evaluate(
@@ -43,6 +41,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
             if pos.y < h - 1 {
@@ -51,6 +50,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
             if pos.y > 0 && pos.x > 0 {
@@ -59,6 +59,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
             if pos.y > 0 && pos.x < w - 1 {
@@ -67,6 +68,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
             if pos.y < h - 1 && pos.x > 0 {
@@ -75,6 +77,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
             if pos.y < h - 1 && pos.x < w - 1 {
@@ -83,6 +86,7 @@ impl<'a> System<'a> for AdjacentAI {
                     &factions,
                     &my_faction.name,
                     &mut reactions,
+                    &map,
                 );
             }
 
@@ -112,8 +116,9 @@ fn evaluate(
     factions: &ReadStorage<Faction>,
     my_faction: &str,
     reactions: &mut Vec<(Entity, Reaction)>,
+    map: &Map,
 ) {
-    for other_entity in get_content(idx).iter() {
+    for other_entity in map.tiles[idx].content.iter() {
         if let Some(faction) = factions.get(*other_entity) {
             reactions.push((
                 *other_entity,

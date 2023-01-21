@@ -2,8 +2,8 @@ use bracket_lib::prelude::Algorithm2D;
 use specs::prelude::*;
 
 use super::{
-    faction_reaction, get_content, Chasing, Faction, Map, MyTurn, Position, Reaction, Viewshed,
-    WantsToApproach, WantsToFlee, RAWS,
+    faction_reaction, Chasing, Faction, Map, MyTurn, Position, Reaction, Viewshed, WantsToApproach,
+    WantsToFlee, RAWS,
 };
 
 pub struct VisibleAI {}
@@ -49,7 +49,7 @@ impl<'a> System<'a> for VisibleAI {
             for visible_tile in viewshed.visible_tiles.iter() {
                 let idx = map.point2d_to_index(*visible_tile);
                 if my_idx != idx {
-                    evaluate(idx, &factions, &my_faction.name, &mut reactions);
+                    evaluate(idx, &factions, &my_faction.name, &mut reactions, &map);
                 }
             }
 
@@ -91,8 +91,9 @@ fn evaluate(
     factions: &ReadStorage<Faction>,
     my_faction: &str,
     reactions: &mut Vec<(usize, Reaction, Entity)>,
+    map: &Map,
 ) {
-    for other_entity in get_content(idx).iter() {
+    for other_entity in map.tiles[idx].content.iter() {
         if let Some(faction) = factions.get(*other_entity) {
             reactions.push((
                 idx,

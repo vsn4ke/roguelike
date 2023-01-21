@@ -1,8 +1,8 @@
 use super::{
-    super::colors::*, particle::ParticleBuilder, spatial::get_content, AreaOfEffect, Confusion,
-    Consumable, EquipmentChanged, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Name,
-    Pools, Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem,
-    WantsToRemoveItem, WantsToUseItem,
+    super::colors::*, particle::ParticleBuilder, AreaOfEffect, Confusion, Consumable,
+    EquipmentChanged, Equippable, Equipped, InBackpack, InflictsDamage, Log, Map, Name, Pools,
+    Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
+    WantsToUseItem,
 };
 use bracket_lib::{
     prelude::{field_of_view, Algorithm2D},
@@ -111,7 +111,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     blast_tiles.retain(|p| map.in_bounds(*p));
                     for tile_pt in blast_tiles.iter() {
                         let idx = map.point2d_to_index(*tile_pt);
-                        for mob in get_content(idx).iter() {
+                        for mob in map.tiles[idx].content.iter() {
                             targets.push(*mob);
                         }
                         particle_builder.request(
@@ -127,7 +127,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     //Mono
                     let idx = map.point2d_to_index(target);
 
-                    for mob in get_content(idx).iter() {
+                    for mob in map.tiles[idx].content.iter() {
                         targets.push(*mob);
                     }
                 }

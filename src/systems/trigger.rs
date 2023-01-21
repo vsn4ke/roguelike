@@ -1,6 +1,6 @@
 use super::{
-    super::colors::*, particle::ParticleBuilder, spatial::get_content, EntityMoved, EntryTrigger,
-    Hidden, InflictsDamage, Log, Map, Name, Position, SingleActivation, SufferDamage,
+    super::colors::*, particle::ParticleBuilder, EntityMoved, EntryTrigger, Hidden, InflictsDamage,
+    Log, Map, Name, Position, SingleActivation, SufferDamage,
 };
 use bracket_lib::terminal::to_cp437;
 use specs::prelude::*;
@@ -41,7 +41,7 @@ impl<'a> System<'a> for TriggerSystem {
         let mut remove_entities: Vec<Entity> = Vec::new();
         for (entity, _, pos) in (&entities, &entity_moved, &position).join() {
             let idx = map.coord_to_index(pos.x, pos.y);
-            for entity_id in get_content(idx).iter() {
+            for entity_id in map.tiles[idx].content.iter() {
                 if entity == *entity_id || entry_trigger.get(*entity_id).is_none() {
                     continue;
                 }

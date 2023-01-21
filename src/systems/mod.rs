@@ -5,7 +5,7 @@ use super::{
         Consumable, EquipmentChanged, EquipmentSlot, Equippable, Equipped, InBackpack, MeleeWeapon,
         Wearable,
     },
-    map::{spatial, Map},
+    map::{tiles, Map},
     props::{LightSource, SingleActivation},
     raws::{
         SpawnType, RAWS,
@@ -16,7 +16,7 @@ use super::{
         Attributes, EntityMoved, Initiative, LootTable, MyTurn, NaturalProperty, Player, Pools,
         Skills, SufferDamage, Viewshed,
     },
-    BlocksVisibility, Hidden, Log, Name, ParticleLifetime, Position, Renderable,
+    BlocksTile, BlocksVisibility, Hidden, Log, Name, ParticleLifetime, Position, Renderable,
 };
 
 pub mod ai;

@@ -1,7 +1,7 @@
 use crate::pathfinding::a_star::a_star_search;
 use specs::prelude::*;
 
-use super::{move_entity, Chasing, EntityMoved, Map, MyTurn, Position, Viewshed};
+use super::{Chasing, EntityMoved, Map, MyTurn, Position, Viewshed};
 use std::collections::HashMap;
 
 pub struct ChaseAI {}
@@ -12,15 +12,22 @@ impl<'a> System<'a> for ChaseAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, Chasing>,
         WriteStorage<'a, Position>,
-        ReadExpect<'a, Map>,
+        WriteExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut turns, mut chasing, mut positions, map, mut viewsheds, mut entity_moved, entities) =
-            data;
+        let (
+            mut turns,
+            mut chasing,
+            mut positions,
+            mut map,
+            mut viewsheds,
+            mut entity_moved,
+            entities,
+        ) = data;
 
         let mut targets: HashMap<Entity, (i32, i32)> = HashMap::new();
         let mut end_chase: Vec<Entity> = Vec::new();
@@ -59,7 +66,7 @@ impl<'a> System<'a> for ChaseAI {
                     .expect("Unable to insert marker");
                 let dest_idx = map.coord_to_index(pos.x, pos.y);
 
-                move_entity(entity, idx, dest_idx);
+                map.move_entity(entity, idx, dest_idx);
                 viewshed.dirty = true;
                 turn_done.push(entity);
             } else {

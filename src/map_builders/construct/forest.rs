@@ -16,7 +16,7 @@ pub fn forest_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
         .with(CullUnreachable::new())
         .with(AreaStartingPosition::new((X::Left, Y::Center)))
         .with(VoronoiSpawner::new())
-        .with(ForestRoad::new());
+        .with(ForestRoad::new()); 
 
     builder
 }

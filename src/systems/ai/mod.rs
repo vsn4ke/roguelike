@@ -2,10 +2,7 @@ use super::super::{
     action::{WantsToApproach, WantsToFlee, WantsToMelee},
     effect::Confusion,
     item::{EquipmentChanged, Equipped, InBackpack, Item},
-    map::{
-        spatial::{get_content, is_blocked, move_entity},
-        Map,
-    },
+    map::Map,
     raws::{
         factions::{faction_reaction, Reaction},
         RAWS,

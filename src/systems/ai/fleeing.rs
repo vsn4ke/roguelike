@@ -1,4 +1,4 @@
-use super::{is_blocked, move_entity, EntityMoved, Map, MyTurn, Position, Viewshed, WantsToFlee};
+use super::{EntityMoved, Map, MyTurn, Position, Viewshed, WantsToFlee};
 use bracket_lib::prelude::DijkstraMap;
 use specs::prelude::*;
 
@@ -10,7 +10,7 @@ impl<'a> System<'a> for FleeAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, WantsToFlee>,
         WriteStorage<'a, Position>,
-        ReadExpect<'a, Map>,
+        WriteExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
@@ -21,7 +21,7 @@ impl<'a> System<'a> for FleeAI {
             mut turns,
             mut want_flee,
             mut positions,
-            map,
+            mut map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -48,8 +48,8 @@ impl<'a> System<'a> for FleeAI {
                 100.0,
             );
             if let Some(flee_target) = DijkstraMap::find_highest_exit(&flee_map, my_idx, &*map) {
-                if !is_blocked(flee_target) {
-                    move_entity(entity, my_idx, flee_target);
+                if !map.is_blocked(flee_target) {
+                    map.move_entity(entity, my_idx, flee_target);
                     viewshed.dirty = true;
                     pos.x = flee_target as i32 % map.width;
                     pos.y = flee_target as i32 / map.width;

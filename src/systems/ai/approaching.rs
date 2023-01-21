@@ -1,7 +1,7 @@
 use crate::pathfinding::a_star::a_star_search;
 use specs::prelude::*;
 
-use super::{move_entity, EntityMoved, Map, MyTurn, Position, Viewshed, WantsToApproach};
+use super::{EntityMoved, Map, MyTurn, Position, Viewshed, WantsToApproach};
 
 pub struct ApproachAI {}
 
@@ -11,7 +11,7 @@ impl<'a> System<'a> for ApproachAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, WantsToApproach>,
         WriteStorage<'a, Position>,
-        ReadExpect<'a, Map>,
+        WriteExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
@@ -22,7 +22,7 @@ impl<'a> System<'a> for ApproachAI {
             mut turns,
             mut want_approach,
             mut positions,
-            map,
+            mut map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -52,7 +52,7 @@ impl<'a> System<'a> for ApproachAI {
                     .insert(entity, EntityMoved {})
                     .expect("Unable to insert marker");
                 let new_idx = map.coord_to_index(pos.x, pos.y);
-                move_entity(entity, idx, new_idx);
+                map.move_entity(entity, idx, new_idx);
                 viewshed.dirty = true;
             }
         }

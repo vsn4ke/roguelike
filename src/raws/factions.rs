@@ -2,7 +2,7 @@ use super::RawMaster;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Reaction {
     Ignore,
     Attack,
@@ -25,5 +25,6 @@ pub fn faction_reaction(my: &str, their: &str, raws: &RawMaster) -> Reaction {
             return my_faction["Default"];
         }
     }
+    print!("Ignore");
     Reaction::Ignore
 }

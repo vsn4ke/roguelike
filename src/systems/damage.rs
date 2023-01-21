@@ -128,6 +128,9 @@ pub fn delete_the_deads(ecs: &mut World) {
             if let Some(tag) = get_loots(&RAWS.lock().unwrap(), &loot.table) {
                 if let Some(pos) = ecs.write_storage::<Position>().get(*victim) {
                     to_spawn.push((tag, *pos));
+                    let mut map = ecs.fetch_mut::<Map>();
+                    let idx = map.coord_to_index(pos.x, pos.y);
+                    map.blocks_movement(idx, false);
                 }
             }
         }

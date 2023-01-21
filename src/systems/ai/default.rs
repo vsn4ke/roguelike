@@ -1,8 +1,6 @@
 use crate::{map::tiles::is_tile_walkable, pathfinding::a_star::a_star_search};
 
-use super::{
-    is_blocked, move_entity, EntityMoved, Map, Movement, MovementMode, MyTurn, Position, Viewshed,
-};
+use super::{EntityMoved, Map, Movement, MovementMode, MyTurn, Position, Viewshed};
 use bracket_lib::{prelude::Algorithm2D, random::RandomNumberGenerator};
 use specs::prelude::*;
 
@@ -14,7 +12,7 @@ impl<'a> System<'a> for DefaultMoveAI {
         WriteStorage<'a, MyTurn>,
         WriteStorage<'a, MovementMode>,
         WriteStorage<'a, Position>,
-        ReadExpect<'a, Map>,
+        WriteExpect<'a, Map>,
         WriteStorage<'a, Viewshed>,
         WriteStorage<'a, EntityMoved>,
         Entities<'a>,
@@ -25,7 +23,7 @@ impl<'a> System<'a> for DefaultMoveAI {
             mut turns,
             mut move_mode,
             mut positions,
-            map,
+            mut map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -58,7 +56,7 @@ impl<'a> System<'a> for DefaultMoveAI {
 
                     let dest_idx = map.point2d_to_index(pt);
 
-                    if !map.in_bounds(pt) || is_blocked(dest_idx) {
+                    if !map.in_bounds(pt) || map.is_blocked(dest_idx) {
                         return;
                     }
 
@@ -69,21 +67,21 @@ impl<'a> System<'a> for DefaultMoveAI {
                     entity_moved
                         .insert(entity, EntityMoved {})
                         .expect("Unable to insert marker");
-                    move_entity(entity, idx, dest_idx);
+                    map.move_entity(entity, idx, dest_idx);
                     viewshed.dirty = true;
                 }
                 Movement::Waypoint { path } => {
                     if let Some(path) = path {
                         let idx = map.coord_to_index(pos.x, pos.y);
                         if path.len() > 1 {
-                            if !is_blocked(path[1]) {
+                            if !map.is_blocked(path[1]) {
                                 pos.x = path[1] as i32 % map.width;
                                 pos.y = path[1] as i32 / map.width;
                                 entity_moved
                                     .insert(entity, EntityMoved {})
                                     .expect("Unable to insert marker");
                                 let dest_idx = map.coord_to_index(pos.x, pos.y);
-                                move_entity(entity, idx, dest_idx);
+                                map.move_entity(entity, idx, dest_idx);
                                 viewshed.dirty = true;
                                 path.remove(0);
                             }

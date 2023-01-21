@@ -1,6 +1,5 @@
 use super::{
     super::{map_builders::level_builder, unit::Viewshed},
-    spatial::set_size,
     Map, OtherLevelPosition, Position, Surface,
 };
 use bracket_lib::{prelude::Algorithm2D, terminal::Point};
@@ -69,7 +68,6 @@ pub fn unfreeze_level_entities(ecs: &mut World) {
     let player_entity = ecs.fetch::<Entity>();
     let map = ecs.fetch::<Map>();
     let depth = map.depth;
-    set_size((map.width * map.height) as usize);
 
     let mut pos_to_delete: Vec<Entity> = Vec::new();
     for (entity, pos) in (&entities, &other_level_positions).join() {

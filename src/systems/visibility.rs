@@ -1,6 +1,4 @@
-use super::{
-    spatial::get_content, BlocksVisibility, Hidden, Log, Map, Name, Player, Position, Viewshed,
-};
+use super::{BlocksVisibility, Hidden, Log, Map, Name, Player, Position, Viewshed};
 use bracket_lib::{
     prelude::{field_of_view, Algorithm2D},
     random::RandomNumberGenerator,
@@ -58,7 +56,7 @@ impl<'a> System<'a> for VisibilitySystem {
                 map.tiles[idx].revealed = true;
                 map.tiles[idx].visible = true;
 
-                for e in get_content(idx).iter() {
+                for e in map.tiles[idx].content.iter() {
                     if hidden.get(*e).is_none() || rng.range(1, 24) > 1 {
                         continue;
                     }
