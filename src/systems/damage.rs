@@ -37,6 +37,9 @@ impl<'a> System<'a> for DamageSystem {
         let mut money_gain = 0;
 
         for (entity, mut pools, damage) in (&entities, &mut pools, &damage).join() {
+            if pools.god_mode {
+                continue;
+            }
             for dmg in damage.amount.iter() {
                 pools.hit_points.current -= dmg.0;
 

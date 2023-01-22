@@ -1,30 +1,43 @@
-use super::super::colors::*;
-use bracket_lib::terminal::{to_cp437, BTerm, VirtualKeyCode};
+use super::inventory::{draw_menu, draw_menu_item};
+use bracket_lib::terminal::{BTerm, VirtualKeyCode};
 pub enum CheatMenuResult {
     Cancel,
     NoResponse,
     TeleportToExit,
+    Heal,
+    RevealMap,
+    GodMode,
 }
 
 pub fn show_cheat_menu(ctx: &mut BTerm) -> CheatMenuResult {
-    let count = 2;
+    let menu = [
+        ('t', "Teleport to exit"),
+        ('h', "Heal all wounds"),
+        ('r', "Reveal the map"),
+        ('g', "God Mode"),
+    ];
+
+    let count = menu.len();
     let y = 25 - count / 2;
-    ctx.draw_box(15, y - 2, 31, count + 3, c(WHITE), c(BLACK));
-    ctx.print_color(18, y - 2, c(YELLOW1), c(BLACK), "Cheating!");
-    ctx.print_color(18, y + count + 1, c(YELLOW1), c(BLACK), "ESCAPE to cancel");
 
-    ctx.set(17, y, c(WHITE), c(BLACK), to_cp437('('));
-    ctx.set(18, y, c(YELLOW1), c(BLACK), to_cp437('T'));
-    ctx.set(19, y, c(WHITE), c(BLACK), to_cp437(')'));
-
-    ctx.print(21, y, "Teleport to exit");
+    draw_menu(ctx, count, "Cheating!", y);
+    for (i, m) in menu.iter().enumerate() {
+        draw_menu_item(ctx, u(m.0), y + i, m.1);
+    }
 
     match ctx.key {
         None => CheatMenuResult::NoResponse,
         Some(key) => match key {
             VirtualKeyCode::T => CheatMenuResult::TeleportToExit,
+            VirtualKeyCode::H => CheatMenuResult::Heal,
+            VirtualKeyCode::R => CheatMenuResult::RevealMap,
+            VirtualKeyCode::G => CheatMenuResult::GodMode,
             VirtualKeyCode::Escape => CheatMenuResult::Cancel,
             _ => CheatMenuResult::NoResponse,
         },
     }
+}
+
+fn u(char: char) -> usize {
+    char as usize - 97
 }

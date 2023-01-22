@@ -187,6 +187,7 @@ pub struct Pools {
     pub mana: Pool,
     pub xp: i32,
     pub money: i32,
+    pub god_mode: bool,
 }
 
 impl Pools {
@@ -196,15 +197,17 @@ impl Pools {
             xp: 0,
             hit_points: Pool::new(attr.npc_max_hp()),
             mana: Pool::new(attr.max_mana()),
+            god_mode: false,
         }
     }
 
     pub fn new_player(attr: Attributes) -> Self {
         Self {
-            money: 0,
+            money: 50,
             xp: 0,
             hit_points: Pool::new(attr.player_max_hp()),
             mana: Pool::new(attr.max_mana()),
+            god_mode: false,
         }
     }
 }

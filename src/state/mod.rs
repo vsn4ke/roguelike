@@ -37,6 +37,8 @@ use super::{
     unit::{Pools, VendorMode},
     First, Log, FIRST_LEVEL, SHOW_MAPGEN_VISUALIZER,
 };
+mod sub;
+use sub::*;
 
 use bracket_lib::terminal::{BTerm, GameState};
 use specs::prelude::*;
@@ -176,90 +178,11 @@ impl GameState for State {
                     }
                 }
             }
-            RunState::ShowInventory => {
-                let result = show_item_menu(self, ctx, ItemMenuType::Use);
-                match result.0 {
-                    ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
-                    ItemMenuResult::NoResponse => {}
-                    ItemMenuResult::Selected => {
-                        let item_entity = result.1.unwrap();
-                        if let Some(is_ranged) = self.ecs.read_storage::<Ranged>().get(item_entity)
-                        {
-                            newrunstate = RunState::ShowTargeting {
-                                range: is_ranged.range,
-                                item: item_entity,
-                            };
-                        } else {
-                            self.ecs
-                                .write_storage::<WantsToUseItem>()
-                                .insert(
-                                    *self.ecs.fetch::<Entity>(),
-                                    WantsToUseItem {
-                                        item: item_entity,
-                                        target: None,
-                                    },
-                                )
-                                .expect("Unable to insert intent");
-                            newrunstate = RunState::Ticking;
-                        }
-                    }
-                }
-            }
-            RunState::ShowDropItem => {
-                let result = show_item_menu(self, ctx, ItemMenuType::Drop);
-                match result.0 {
-                    ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
-                    ItemMenuResult::NoResponse => {}
-                    ItemMenuResult::Selected => {
-                        let item_entity = result.1.unwrap();
-                        self.ecs
-                            .write_storage::<WantsToDropItem>()
-                            .insert(
-                                *self.ecs.fetch::<Entity>(),
-                                WantsToDropItem { item: item_entity },
-                            )
-                            .expect("Unable to insert intent");
-                        newrunstate = RunState::Ticking;
-                    }
-                }
-            }
-            RunState::ShowRemoveItem => {
-                let result = remove_item_menu(self, ctx);
-                match result.0 {
-                    ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
-                    ItemMenuResult::NoResponse => {}
-                    ItemMenuResult::Selected => {
-                        let item_entity = result.1.unwrap();
-                        self.ecs
-                            .write_storage::<WantsToRemoveItem>()
-                            .insert(
-                                *self.ecs.fetch::<Entity>(),
-                                WantsToRemoveItem { item: item_entity },
-                            )
-                            .expect("Unable to insert intent");
-                        newrunstate = RunState::Ticking;
-                    }
-                }
-            }
+            RunState::ShowInventory => newrunstate = show_inv_use(self, ctx),
+            RunState::ShowDropItem => newrunstate = show_inv_drop(self, ctx),
+            RunState::ShowRemoveItem => newrunstate = show_inv_remove(self, ctx),
             RunState::ShowTargeting { range, item } => {
-                let result = ranged_target(self, ctx, range);
-                match result.0 {
-                    ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
-                    ItemMenuResult::NoResponse => {}
-                    ItemMenuResult::Selected => {
-                        self.ecs
-                            .write_storage::<WantsToUseItem>()
-                            .insert(
-                                *self.ecs.fetch::<Entity>(),
-                                WantsToUseItem {
-                                    item,
-                                    target: result.1,
-                                },
-                            )
-                            .expect("Unable to insert intent");
-                        newrunstate = RunState::Ticking;
-                    }
-                }
+                newrunstate = show_targeting(self, ctx, range, item)
             }
             RunState::MainMenu { .. } => match main_menu(self, ctx) {
                 MainMenuResult::NoSelection { selected } => {
@@ -290,25 +213,7 @@ impl GameState for State {
                     }
                 }
             },
-            RunState::MapGeneration => {
-                if !SHOW_MAPGEN_VISUALIZER {
-                    newrunstate = self.gen.next_state.unwrap();
-                } else {
-                    ctx.cls();
-                    if self.gen.index < self.gen.history.len() {
-                        render_debug_map(&self.gen.history[self.gen.index], ctx);
-                    }
-
-                    self.gen.timer += ctx.frame_time_ms;
-                    if self.gen.timer > 300.0 {
-                        self.gen.timer = 0.0;
-                        self.gen.index += 1;
-                        if self.gen.index >= self.gen.history.len() {
-                            newrunstate = self.gen.next_state.unwrap();
-                        }
-                    }
-                }
-            }
+            RunState::MapGeneration => newrunstate = map_generation(&mut self.gen, ctx),
             RunState::NextLevel => {
                 self.goto_level(1);
                 newrunstate = RunState::PreRun;
@@ -326,44 +231,32 @@ impl GameState for State {
                     self.gen.next_state = Some(RunState::PreRun);
                     newrunstate = RunState::MapGeneration;
                 }
+                CheatMenuResult::Heal => {
+                    let mut pools = self.ecs.write_storage::<Pools>();
+                    let mut player_pools = pools.get_mut(*self.ecs.fetch::<Entity>()).unwrap();
+                    player_pools.hit_points.current = player_pools.hit_points.max;
+                    newrunstate = RunState::AwaitingInput;
+                }
+                CheatMenuResult::RevealMap => {
+                    for v in self.ecs.fetch_mut::<Map>().tiles.iter_mut() {
+                        v.revealed = true;
+                    }
+                    newrunstate = RunState::AwaitingInput;
+                }
+                CheatMenuResult::GodMode => {
+                    let mut pools = self.ecs.write_storage::<Pools>();
+                    let mut player_pools = pools.get_mut(*self.ecs.fetch::<Entity>()).unwrap();
+                    player_pools.god_mode = !player_pools.god_mode;
+                    newrunstate = RunState::AwaitingInput;
+                }
             },
             RunState::ShowVendor { vendor, mode } => {
-                let result = show_vendor_menu(self, ctx, vendor, mode);
-                match result.0 {
+                let (result, entity, name, value) = show_vendor_menu(self, ctx, vendor, mode);
+                match result {
                     VendorResult::Cancel => newrunstate = RunState::AwaitingInput,
                     VendorResult::NoResponse => {}
-                    VendorResult::Sell => {
-                        let price = self
-                            .ecs
-                            .read_storage::<Item>()
-                            .get(result.1.unwrap())
-                            .unwrap()
-                            .base_value;
-                        self.ecs
-                            .write_storage::<Pools>()
-                            .get_mut(*self.ecs.fetch::<Entity>())
-                            .unwrap()
-                            .money += price;
-                        self.ecs
-                            .delete_entity(result.1.unwrap())
-                            .expect("Unable to delete");
-                    }
-                    VendorResult::Buy => {
-                        let price = result.3.unwrap();
-                        let mut pools = self.ecs.write_storage::<Pools>();
-                        let player_pools = pools.get_mut(*self.ecs.fetch::<Entity>()).unwrap();
-                        if player_pools.money >= price {
-                            player_pools.money -= price;
-                            std::mem::drop(pools);
-                            let player_entity = *self.ecs.fetch::<Entity>();
-                            spawn_named_item(
-                                &RAWS.lock().unwrap(),
-                                &mut self.ecs,
-                                &result.2.unwrap(),
-                                SpawnType::Carried { by: player_entity },
-                            );
-                        }
-                    }
+                    VendorResult::Sell => sell(&mut self.ecs, entity.unwrap()),
+                    VendorResult::Buy => buy(&mut self.ecs, value.unwrap(), &name.unwrap()),
                     VendorResult::BuyMode => {
                         newrunstate = RunState::ShowVendor {
                             vendor,

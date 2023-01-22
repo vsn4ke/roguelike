@@ -22,7 +22,7 @@ pub enum ItemMenuType {
 const MENU_X: usize = 12;
 const MENU_WIDTH: usize = 50;
 
-fn draw_menu(ctx: &mut BTerm, count: usize, menu_text: &str, y: usize) {
+pub fn draw_menu(ctx: &mut BTerm, count: usize, menu_text: &str, y: usize) {
     ctx.draw_box(
         MENU_X,
         y - 2,
@@ -41,7 +41,7 @@ fn draw_menu(ctx: &mut BTerm, count: usize, menu_text: &str, y: usize) {
     );
 }
 
-fn draw_menu_item(ctx: &mut BTerm, j: usize, y: usize, item_name: &str) {
+pub fn draw_menu_item(ctx: &mut BTerm, j: usize, y: usize, item_name: &str) {
     ctx.set(MENU_X + 2, y, c(WHITE), c(BLACK), to_cp437('('));
     ctx.set(MENU_X + 3, y, c(YELLOW1), c(BLACK), 97 + j as FontCharType);
     ctx.set(MENU_X + 4, y, c(WHITE), c(BLACK), to_cp437(')'));
@@ -169,16 +169,15 @@ fn vendor_sell_menu(
     );
 
     let mut equippable: Vec<Entity> = Vec::new();
-    let mut j = 0;
-    for (entity, _, name, item) in (&entities, &backpack, &names, &items)
+    for (j, (entity, _, name, item)) in (&entities, &backpack, &names, &items)
         .join()
         .filter(|item| item.1.owner == *player_entity)
+        .enumerate()
     {
         draw_menu_item(ctx, j, y, &name.name);
         draw_price_item(ctx, item.base_value, y);
         equippable.push(entity);
         y += 1;
-        j += 1;
     }
 
     match ctx.key {
