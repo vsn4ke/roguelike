@@ -1,15 +1,14 @@
 use bracket_lib::{
     prelude::Algorithm2D,
-    random::RandomNumberGenerator,
     terminal::{DistanceAlg, Point, Rect},
 };
 
-use super::{BuilderMap, Surface};
+use super::{BuilderMap, RandomGen, Surface};
 pub struct RoomDrawer {}
 
 impl super::MetaMapBuilder for RoomDrawer {
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let rooms: Vec<Rect> = if let Some(rb) = &data.rooms {
             rb.clone()
         } else {

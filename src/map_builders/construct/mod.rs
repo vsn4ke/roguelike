@@ -28,6 +28,7 @@ use super::{
         voronoi_spawner::VoronoiSpawner,
         {random_position, X, Y},
     },
+    rng::RandomGen,
     BuilderChain, BuilderMap, InitialMapBuilder, Map, MetaMapBuilder,
 };
 

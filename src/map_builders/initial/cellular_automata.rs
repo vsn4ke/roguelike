@@ -1,12 +1,10 @@
-use bracket_lib::random::RandomNumberGenerator;
-
-use super::{BuilderMap, Map, Surface};
+use super::{BuilderMap, Map, RandomGen, Surface};
 
 pub struct CellularAutomataBuilder {}
 
 impl super::InitialMapBuilder for CellularAutomataBuilder {
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         for y in 1..data.map.height - 1 {
             for x in 1..data.map.width - 1 {
                 let roll = rng.range(0, 100);

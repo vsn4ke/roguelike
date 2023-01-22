@@ -1,8 +1,5 @@
-use super::{BlocksVisibility, Hidden, Log, Map, Name, Player, Position, Viewshed};
-use bracket_lib::{
-    prelude::{field_of_view, Algorithm2D},
-    random::RandomNumberGenerator,
-};
+use super::{BlocksVisibility, Hidden, Log, Map, Name, Player, Position, RandomGen, Viewshed};
+use bracket_lib::prelude::{field_of_view, Algorithm2D};
 use specs::prelude::*;
 
 pub struct VisibilitySystem {}
@@ -23,7 +20,7 @@ impl<'a> System<'a> for VisibilitySystem {
         let (mut map, entities, mut viewshed, pos, player, mut hidden, names, blocks_visibility) =
             data;
 
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         for i in 0..map.tiles.len() {
             map.tiles[i].block_visibility = false;

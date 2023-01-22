@@ -13,3 +13,5 @@ serde = { version="1.0.152", features = ["derive"] }
 serde_json = "1.0.91"
 lazy_static = "1.4.0"
 regex="*"
+rand_xorshift="0.3"
+getrandom="0.2"

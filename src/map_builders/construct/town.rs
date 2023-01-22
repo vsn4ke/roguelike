@@ -2,11 +2,10 @@ use std::collections::HashSet;
 
 use bracket_lib::{
     prelude::{a_star_search, Algorithm2D},
-    random::RandomNumberGenerator,
     terminal::{DistanceAlg, Point, Rect},
 };
 
-use super::{BuilderChain, BuilderMap, Surface};
+use super::{BuilderChain, BuilderMap, RandomGen, Surface};
 
 #[derive(Debug)]
 enum BuildingTag {
@@ -33,7 +32,7 @@ pub struct TownBuilder {}
 impl super::InitialMapBuilder for TownBuilder {
     #[allow(dead_code)]
     fn build_map(&mut self, data: &mut BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let usable_area = get_usable_area(data);
         let gap = rng.range(usable_area.y1 + 6, usable_area.y2 - 6);
 
@@ -77,7 +76,7 @@ fn grass_layer(data: &mut BuilderMap) {
 }
 
 fn water_and_piers(data: &mut BuilderMap) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let mut n = (rng.range(1, 65536) as f32) / 65535f32;
     let mut water_width: Vec<i32> = Vec::new();
     for y in 0..data.height {
@@ -173,7 +172,7 @@ fn buildings(
     data: &mut BuilderMap,
     available_building_tiles: &mut HashSet<usize>,
 ) -> Vec<(Rect, Vec<usize>)> {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let mut buildings: Vec<(Rect, Vec<usize>)> = Vec::new();
     let mut number_of_buildings = 0;
     let mut tries = 400;
@@ -293,7 +292,7 @@ fn add_paths(data: &mut BuilderMap, doors: &[usize]) {
 }
 
 fn add_doors(data: &mut BuilderMap, buildings: &mut [(Rect, Vec<usize>)]) -> Vec<usize> {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let mut doors = Vec::new();
 
     for building in buildings.iter() {
@@ -345,7 +344,7 @@ fn building_factory(
     building_index: &[(usize, i32, BuildingTag)],
 ) {
     use BuildingTag::*;
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     for (i, building) in buildings.iter().enumerate() {
         let mut interior = match &building_index[i].2 {
             Pub => build_pub(),
@@ -375,7 +374,7 @@ fn random_building_spawn(
     player_idx: usize,
 ) {
     let mut used_indexes = Vec::new();
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
 
     for _ in 0..200 {
         if to_place.is_empty() {
@@ -455,7 +454,7 @@ fn build_abandonned(n_rats: usize) -> Vec<&'static str> {
 }
 
 fn spawn_dockers(data: &mut BuilderMap, dock_tiles: &mut Vec<usize>) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let dockers = ["Dock Worker", "Wannabe Pirate", "Fisher"];
     if dock_tiles.len() < 10 {
         println!("Too few dock tiles.");
@@ -470,7 +469,7 @@ fn spawn_dockers(data: &mut BuilderMap, dock_tiles: &mut Vec<usize>) {
 }
 
 fn spawn_townsfolk(data: &mut BuilderMap, available_building_tiles: &mut HashSet<usize>) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let townsfolk = ["Peasant", "Drunk", "Dock Worker", "Fisher"];
 
     let area = get_usable_area(data);

@@ -1,16 +1,14 @@
-use bracket_lib::{
-    random::RandomNumberGenerator,
-    terminal::{DistanceAlg, Point},
-};
+use bracket_lib::terminal::{DistanceAlg, Point};
 
 use super::{
     super::{
         map::{
             tiles::{is_tile_walkable, Surface},
-            Map,
+            Map, Tile,
         },
         spawner,
     },
+    rng::RandomGen,
     BuilderMap, MetaMapBuilder,
 };
 
@@ -84,7 +82,7 @@ pub enum Y {
 }
 
 pub fn random_position() -> (X, Y) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     (
         match rng.range(0, 3) {
             0 => X::Left,

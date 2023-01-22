@@ -1,5 +1,6 @@
 use super::{
     super::map::{tiles::Surface, Map},
+    rng::RandomGen,
     BuilderMap, InitialMapBuilder, MetaMapBuilder,
 };
 

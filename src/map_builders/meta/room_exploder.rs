@@ -1,15 +1,15 @@
-use bracket_lib::{prelude::Algorithm2D, random::RandomNumberGenerator, terminal::Rect};
+use bracket_lib::{prelude::Algorithm2D, terminal::Rect};
 
 use super::{
     paint::{paint, Symmetry},
-    Surface,
+    RandomGen, Surface,
 };
 
 pub struct RoomExploder {}
 
 impl super::MetaMapBuilder for RoomExploder {
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let rooms: Vec<Rect> = if let Some(rb) = &data.rooms {
             rb.clone()
         } else {

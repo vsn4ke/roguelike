@@ -1,6 +1,6 @@
-use bracket_lib::{prelude::Algorithm2D, random::RandomNumberGenerator, terminal::Point};
+use bracket_lib::{prelude::Algorithm2D, terminal::Point};
 
-use super::{BuilderMap, Map, Surface};
+use super::{BuilderMap, Map, RandomGen, Surface};
 
 const TOP: usize = 0;
 const RIGHT: usize = 1;
@@ -112,7 +112,7 @@ impl Grid {
             return Some(neighbours[0]);
         }
 
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         Some(neighbours[rng.range(0, neighbours.len())])
     }
 

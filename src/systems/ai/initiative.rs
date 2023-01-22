@@ -1,8 +1,5 @@
-use super::super::{Attributes, Initiative, MyTurn, Position, RunState};
-use bracket_lib::{
-    random::RandomNumberGenerator,
-    terminal::{DistanceAlg, Point},
-};
+use super::super::{Attributes, Initiative, MyTurn, Position, RandomGen, RunState};
+use bracket_lib::terminal::{DistanceAlg, Point};
 use specs::prelude::*;
 
 pub struct InitiativeSystem {}
@@ -30,7 +27,7 @@ impl<'a> System<'a> for InitiativeSystem {
             player,
             player_pos,
         ) = data;
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         if *runstate != RunState::Ticking {
             return;

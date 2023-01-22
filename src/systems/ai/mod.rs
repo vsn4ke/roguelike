@@ -7,6 +7,7 @@ use super::super::{
         factions::{faction_reaction, Reaction},
         RAWS,
     },
+    rng::RandomGen,
     state::RunState,
     unit::{
         Attributes, Chasing, EntityMoved, Faction, Movement, MovementMode, MyTurn, Quips, Viewshed,

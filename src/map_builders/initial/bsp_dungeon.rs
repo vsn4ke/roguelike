@@ -1,10 +1,9 @@
 use bracket_lib::{
     prelude::Algorithm2D,
-    random::RandomNumberGenerator,
     terminal::{Point, Rect},
 };
 
-use super::{BuilderMap, InitialMapBuilder, Surface};
+use super::{BuilderMap, InitialMapBuilder, RandomGen, Surface};
 
 pub struct BspDungeonBuilder {
     rects: Vec<Rect>,
@@ -75,25 +74,25 @@ impl BspDungeonBuilder {
     }
 
     fn get_random_rect(&mut self) -> Rect {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         if self.rects.len() == 1 {
             return self.rects[0];
         }
-        let idx = (rng.roll_dice(1, self.rects.len() as i32) - 1) as usize;
+        let idx = rng.range(0, self.rects.len());
         self.rects[idx]
     }
 
     fn get_random_sub_rect(&mut self, rect: Rect) -> Rect {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let mut result = rect;
         let rect_width = i32::abs(rect.x1 - rect.x2);
         let rect_height = i32::abs(rect.y1 - rect.y2);
 
-        let w = i32::max(3, rng.roll_dice(1, i32::min(rect_width, 10)) - 1) + 1;
-        let h = i32::max(3, rng.roll_dice(1, i32::min(rect_height, 10)) - 1) + 1;
+        let w = i32::max(3, rng.range(0, i32::min(rect_width, 10))) + 1;
+        let h = i32::max(3, rng.range(0, i32::min(rect_height, 10))) + 1;
 
-        result.x1 += rng.roll_dice(1, 6) - 1;
-        result.y1 += rng.roll_dice(1, 6) - 1;
+        result.x1 += rng.range(0, 6);
+        result.y1 += rng.range(0, 6);
         result.x2 = result.x1 + w;
         result.y2 = result.y1 + h;
 

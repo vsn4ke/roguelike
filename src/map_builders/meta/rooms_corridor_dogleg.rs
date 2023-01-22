@@ -1,6 +1,9 @@
-use bracket_lib::{random::RandomNumberGenerator, terminal::Rect};
+use bracket_lib::terminal::Rect;
 
-use super::paint::{apply_horizontal_tunnel, apply_vertical_tunnel};
+use super::{
+    paint::{apply_horizontal_tunnel, apply_vertical_tunnel},
+    RandomGen,
+};
 pub struct DoglegCorridors {}
 
 impl super::MetaMapBuilder for DoglegCorridors {
@@ -11,7 +14,7 @@ impl super::MetaMapBuilder for DoglegCorridors {
             panic!("Dogleg corridors require a builder with room structures");
         };
 
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         let mut corridors: Vec<Vec<usize>> = Vec::new();
         for (i, room) in rooms.iter().enumerate() {

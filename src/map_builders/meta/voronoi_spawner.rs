@@ -1,10 +1,8 @@
-use bracket_lib::{
-    prelude::{CellularDistanceFunction, FastNoise, NoiseType},
-    random::RandomNumberGenerator,
-};
+use bracket_lib::prelude::{CellularDistanceFunction, FastNoise, NoiseType};
 
-use super::Surface;
+use super::{RandomGen, Surface};
 use std::collections::HashMap;
+
 pub struct VoronoiSpawner {}
 
 impl VoronoiSpawner {
@@ -16,7 +14,7 @@ impl VoronoiSpawner {
 
 impl super::MetaMapBuilder for VoronoiSpawner {
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let mut noise_areas: HashMap<i32, Vec<usize>> = HashMap::new();
         let mut noise = FastNoise::seeded(rng.range(1, 65536) as u64);
         noise.set_noise_type(NoiseType::Cellular);

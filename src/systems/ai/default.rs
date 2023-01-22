@@ -1,7 +1,7 @@
 use crate::{map::tiles::is_tile_walkable, pathfinding::a_star::a_star_search};
 
-use super::{EntityMoved, Map, Movement, MovementMode, MyTurn, Position, Viewshed};
-use bracket_lib::{prelude::Algorithm2D, random::RandomNumberGenerator};
+use super::{EntityMoved, Map, Movement, MovementMode, MyTurn, Position, RandomGen, Viewshed};
+use bracket_lib::prelude::Algorithm2D;
 use specs::prelude::*;
 
 pub struct DefaultMoveAI {}
@@ -30,7 +30,7 @@ impl<'a> System<'a> for DefaultMoveAI {
         ) = data;
 
         let mut turn_done: Vec<Entity> = Vec::new();
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         for (entity, mut pos, mut movement, mut viewshed, _) in (
             &entities,
             &mut positions,

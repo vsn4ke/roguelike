@@ -14,7 +14,13 @@ use serde_json;
 use std::sync::Mutex;
 
 use super::{
-    colors::c, effect::*, item::*, props::*, rng::*, spawner::random_table::RandomTable, unit::*,
+    colors::c,
+    effect::*,
+    item::*,
+    props::*,
+    rng::{parse_dice_string, RandomGen},
+    spawner::random_table::RandomTable,
+    unit::*,
     BlocksTile, BlocksVisibility, Entity, Hidden, Name, Position, Renderable,
 };
 

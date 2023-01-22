@@ -1,5 +1,5 @@
-use super::{Log, MyTurn, Name, Quips, Viewshed};
-use bracket_lib::{random::RandomNumberGenerator, terminal::Point};
+use super::{Log, MyTurn, Name, Quips, RandomGen, Viewshed};
+use bracket_lib::terminal::Point;
 use specs::prelude::*;
 
 pub struct QuipSystem {}
@@ -16,7 +16,7 @@ impl<'a> System<'a> for QuipSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let (mut quips, names, turns, player_pos, viewsheds) = data;
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         for (quip, source, viewshed, _) in (&mut quips, &names, &viewsheds, &turns).join() {
             if !viewshed.visible_tiles.contains(&player_pos) || rng.range(0, 6) > 0 {

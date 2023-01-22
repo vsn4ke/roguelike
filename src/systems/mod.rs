@@ -11,6 +11,7 @@ use super::{
         SpawnType, RAWS,
         {items::spawn_named_item, loot::get_loots},
     },
+    rng::RandomGen,
     state::RunState,
     unit::{
         Attributes, EntityMoved, Initiative, LootTable, MyTurn, NaturalProperty, Player, Pools,

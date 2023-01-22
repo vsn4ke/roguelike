@@ -1,6 +1,6 @@
-use bracket_lib::{random::RandomNumberGenerator, terminal::Rect};
+use bracket_lib::terminal::Rect;
 
-use super::paint::draw_corridor;
+use super::{paint::draw_corridor, RandomGen};
 pub struct BSPCorridors {}
 
 impl super::MetaMapBuilder for BSPCorridors {
@@ -10,7 +10,7 @@ impl super::MetaMapBuilder for BSPCorridors {
         } else {
             panic!("BSP Corridors require a builder with room structures");
         };
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         let mut corridors: Vec<Vec<usize>> = Vec::new();
         for i in 0..rooms.len() - 1 {

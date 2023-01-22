@@ -1,8 +1,6 @@
-use bracket_lib::random::RandomNumberGenerator;
-
 use super::{
     AreaStartingPosition, BuilderChain, CullUnreachable, DistantExit, DrunkardsWalkBuilder, Map,
-    Surface, VoronoiSpawner, X, Y,
+    RandomGen, Surface, VoronoiSpawner, X, Y,
 };
 
 pub fn cavern_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
@@ -29,7 +27,7 @@ impl CavernDecorator {
 
 impl super::MetaMapBuilder for CavernDecorator {
     fn build_map(&mut self, data: &mut crate::map_builders::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let map = data.map.clone();
 
         for (idx, tile) in data.map.tiles.iter_mut().enumerate() {

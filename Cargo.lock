@@ -899,8 +899,10 @@ version = "0.1.0"
 dependencies = [
  "bracket-lib",
  "bracket-terminal",
+ "getrandom",
  "lazy_static",
  "rand",
+ "rand_xorshift",
  "regex",
  "serde",
  "serde_json",

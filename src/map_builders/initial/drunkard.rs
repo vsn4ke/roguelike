@@ -1,8 +1,8 @@
-use bracket_lib::{prelude::Algorithm2D, random::RandomNumberGenerator, terminal::Point};
+use bracket_lib::{prelude::Algorithm2D, terminal::Point};
 
 use super::{
     super::meta::paint::{paint, Symmetry},
-    Surface,
+    RandomGen, Surface,
 };
 
 #[derive(PartialEq, Copy, Clone)]
@@ -95,7 +95,7 @@ impl DrunkardsWalkBuilder {
     }
 
     fn build(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let starting_point = Point::new(data.map.width / 2, data.map.height / 2);
         let start_idx = data.map.point2d_to_index(starting_point);
         data.map.tiles[start_idx].surface = Surface::Floor;

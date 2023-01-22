@@ -1,9 +1,9 @@
 use super::{
     super::colors::*, particle::ParticleBuilder, Attributes, EquipmentSlot, Equipped, Log,
-    MeleeWeapon, Name, NaturalProperty, Pools, Position, Skills, SufferDamage, WantsToMelee,
-    Wearable,
+    MeleeWeapon, Name, NaturalProperty, Pools, Position, RandomGen, Skills, SufferDamage,
+    WantsToMelee, Wearable,
 };
-use bracket_lib::{random::RandomNumberGenerator, terminal::to_cp437};
+use bracket_lib::terminal::to_cp437;
 use specs::prelude::*;
 
 pub struct MeleeCombatSystem {}
@@ -69,7 +69,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
             let target = sources.get(wants_melee.target).unwrap();
             let target_attributes = attributes.get(wants_melee.target).unwrap();
             let target_skills = skills.get(wants_melee.target).unwrap();
-            let mut rng = RandomNumberGenerator::new();
+            let mut rng = RandomGen::default();
             let natural_roll = rng.roll_dice(1, 20);
 
             let mut attack = MeleeWeapon::base();

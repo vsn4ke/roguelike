@@ -1,5 +1,5 @@
-use super::{super::meta::paint::draw_corridor, BuilderMap, InitialMapBuilder, Surface};
-use bracket_lib::{random::RandomNumberGenerator, terminal::Rect};
+use super::{super::meta::paint::draw_corridor, BuilderMap, InitialMapBuilder, RandomGen, Surface};
+use bracket_lib::terminal::Rect;
 
 const MIN_ROOM_SIZE: i32 = 8;
 
@@ -10,7 +10,7 @@ pub struct BspInteriorBuilder {
 impl InitialMapBuilder for BspInteriorBuilder {
     #[allow(dead_code)]
     fn build_map(&mut self, data: &mut BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let mut rooms: Vec<Rect> = Vec::new();
         self.rects.clear();
         self.rects.push(Rect::with_size(
@@ -43,12 +43,10 @@ impl InitialMapBuilder for BspInteriorBuilder {
         for i in 0..rooms.len() - 1 {
             let room = rooms[i];
             let next_room = rooms[i + 1];
-            let start_x = room.x1 + (rng.roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
-            let start_y = room.y1 + (rng.roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
-            let end_x =
-                next_room.x1 + (rng.roll_dice(1, i32::abs(next_room.x1 - next_room.x2)) - 1);
-            let end_y =
-                next_room.y1 + (rng.roll_dice(1, i32::abs(next_room.y1 - next_room.y2)) - 1);
+            let start_x = room.x1 + rng.range(0, i32::abs(room.x1 - room.x2));
+            let start_y = room.y1 + rng.range(0, i32::abs(room.y1 - room.y2));
+            let end_x = next_room.x1 + rng.range(0, i32::abs(next_room.x1 - next_room.x2));
+            let end_y = next_room.y1 + rng.range(0, i32::abs(next_room.y1 - next_room.y2));
             draw_corridor(&mut data.map, start_x, start_y, end_x, end_y);
             if i % 4 == 0 {
                 data.take_snapshot();
@@ -66,7 +64,7 @@ impl BspInteriorBuilder {
     }
 
     fn add_subrects(&mut self, rect: Rect) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         if !self.rects.is_empty() {
             self.rects.remove(self.rects.len() - 1);
         }
@@ -76,9 +74,7 @@ impl BspInteriorBuilder {
         let half_width = width / 2;
         let half_height = height / 2;
 
-        let split = rng.roll_dice(1, 4);
-
-        if split <= 2 {
+        if rng.range(0, 2) == 0 {
             let h1 = Rect::with_size(rect.x1, rect.y1, half_width - 1, height);
             self.rects.push(h1);
             if half_width > MIN_ROOM_SIZE {

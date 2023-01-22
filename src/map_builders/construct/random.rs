@@ -2,14 +2,13 @@ use super::{
     random_position, AreaStartingPosition, BSPCorridors, BspDungeonBuilder, BspInteriorBuilder,
     BuilderChain, CellularAutomataBuilder, CorridorSpawner, CullUnreachable, DLABuilder,
     DistantExit, DoglegCorridors, DoorPlacement, DrunkardsWalkBuilder, MazeBuilder,
-    NearestCorridors, Nothing, RoomBasedSpawner, RoomBasedStairs, RoomBasedStartingPosition,
-    RoomCornerRounder, RoomDrawer, RoomExploder, RoomSorter, SimpleMapBuilder, Sorter,
-    StraightLineCorridors, VoronoiCellBuilder, VoronoiSpawner, X, Y,
+    NearestCorridors, Nothing, RandomGen, RoomBasedSpawner, RoomBasedStairs,
+    RoomBasedStartingPosition, RoomCornerRounder, RoomDrawer, RoomExploder, RoomSorter,
+    SimpleMapBuilder, Sorter, StraightLineCorridors, VoronoiCellBuilder, VoronoiSpawner, X, Y,
 };
-use bracket_lib::random::RandomNumberGenerator;
 
 pub fn random_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let mut builder = BuilderChain::new(depth, width, height, "Random dungeon");
 
     match rng.range(0, 2) {
@@ -22,7 +21,7 @@ pub fn random_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
 }
 
 fn random_shape_builder(builder: &mut BuilderChain) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     builder
         .start_with(match rng.range(1, 14) {
             1 => CellularAutomataBuilder::new(),
@@ -47,7 +46,7 @@ fn random_shape_builder(builder: &mut BuilderChain) {
 }
 
 fn random_room_builder(builder: &mut BuilderChain) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let roll = rng.range(0, 3);
     builder.start_with(match roll {
         0 => SimpleMapBuilder::new(),

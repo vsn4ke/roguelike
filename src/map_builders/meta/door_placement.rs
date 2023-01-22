@@ -1,8 +1,5 @@
-use bracket_lib::random::RandomNumberGenerator;
+use super::{RandomGen, Surface, Tile};
 
-use crate::map::Tile;
-
-use super::Surface;
 pub struct DoorPlacement {}
 
 impl DoorPlacement {
@@ -60,7 +57,7 @@ fn is_door_possible(map: &super::Map, idx: usize) -> bool {
 }
 
 fn find_doors_in_corridors(data: &mut super::BuilderMap, corridors: Vec<Vec<usize>>) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     for corridor in corridors.iter() {
         if corridor.len() < 2 {
             continue;
@@ -81,7 +78,7 @@ fn find_doors_in_corridors(data: &mut super::BuilderMap, corridors: Vec<Vec<usiz
 }
 
 fn find_doors_in_caves(data: &mut super::BuilderMap, tiles: Vec<Tile>) {
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     for (idx, tile) in tiles.iter().enumerate() {
         if tile.surface != Surface::Floor
             || !is_door_possible(&data.map, idx)

@@ -1,10 +1,9 @@
 use bracket_lib::{
     prelude::Algorithm2D,
-    random::RandomNumberGenerator,
     terminal::{DistanceAlg, Point},
 };
 
-use super::Surface;
+use super::{RandomGen, Surface};
 
 #[allow(dead_code)]
 #[derive(PartialEq, Clone, Copy)]
@@ -42,7 +41,7 @@ impl VoronoiCellBuilder {
 
 impl super::InitialMapBuilder for VoronoiCellBuilder {
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         let starting_point = Point::new(data.map.width / 2, data.map.height / 2);
 
         let start_idx = data.map.point2d_to_index(starting_point);

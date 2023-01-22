@@ -1,10 +1,7 @@
-use std::collections::HashMap;
-
-use bracket_lib::{
-    random::RandomNumberGenerator,
-    terminal::{to_cp437, Rect},
-};
+use super::rng::RandomGen;
+use bracket_lib::terminal::{to_cp437, Rect};
 use specs::prelude::*;
+use std::collections::HashMap;
 
 const MAX_SPAWNS: i32 = 6;
 
@@ -37,7 +34,7 @@ pub fn spawn_in_room(map: &Map, room: &Rect, spawn_list: &mut Vec<(usize, String
 
 pub fn spawn_in_region(area: &[usize], depth: i32, spawn_list: &mut Vec<(usize, String)>) {
     let spawn_table = get_spawn_table_for_depth(&RAWS.lock().unwrap(), depth);
-    let mut rng = RandomNumberGenerator::new();
+    let mut rng = RandomGen::default();
     let mut spawn_points: HashMap<usize, String> = HashMap::new();
     let mut areas: Vec<usize> = Vec::from(area);
     {

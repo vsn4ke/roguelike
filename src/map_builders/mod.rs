@@ -1,4 +1,4 @@
-use super::{spawner, Map, SHOW_MAPGEN_VISUALIZER};
+use super::{rng, spawner, Map, SHOW_MAPGEN_VISUALIZER};
 use bracket_lib::terminal::{Point, Rect};
 use specs::World;
 

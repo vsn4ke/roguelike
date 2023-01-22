@@ -1,13 +1,13 @@
-use bracket_lib::{random::RandomNumberGenerator, terminal::Rect};
+use bracket_lib::terminal::Rect;
 
-use super::InitialMapBuilder;
+use super::{InitialMapBuilder, RandomGen};
 
 pub struct SimpleMapBuilder {}
 
 impl InitialMapBuilder for SimpleMapBuilder {
     #[allow(dead_code)]
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;
         const MAX_SIZE: i32 = 10;

@@ -2,9 +2,10 @@ use super::{
     super::colors::c,
     parse_dice_string,
     rawmaster::{get_renderable_component, spawn_position},
-    roll, spawn_named_entity, Attribute, Attributes, BlocksTile, Entity, EquipmentChanged, Faction,
+    spawn_named_entity, Attribute, Attributes, BlocksTile, Entity, EquipmentChanged, Faction,
     Initiative, LightSource, LootTable, Movement, MovementMode, Name, NaturalAttack,
-    NaturalProperty, Pools, Quips, RawMaster, RenderableRaw, Skills, SpawnType, Vendor, Viewshed,
+    NaturalProperty, Pools, Quips, RandomGen, RawMaster, RenderableRaw, Skills, SpawnType, Vendor,
+    Viewshed,
 };
 use serde::Deserialize;
 use specs::prelude::*;
@@ -68,7 +69,7 @@ pub fn spawn_named_mob(
     if !raws.mob_index.contains_key(key) {
         return None;
     }
-
+    let mut rng = RandomGen::default();
     let mob_template = &raws.raws.mobs[raws.mob_index[key]];
     let mut eb = ecs.create_entity();
     eb = spawn_position(pos, eb, key, raws);
@@ -130,7 +131,7 @@ pub fn spawn_named_mob(
     let mut pools = Pools::new_npc(attr);
 
     if let Some(money) = &mob_template.money {
-        pools.money = roll(money);
+        pools.money = rng.roll_str(money);
     }
 
     eb = eb.with(pools);

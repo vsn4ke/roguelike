@@ -1,4 +1,4 @@
-use bracket_lib::random::RandomNumberGenerator;
+use super::RandomGen;
 
 pub struct RandomEntry {
     name: String,
@@ -39,7 +39,7 @@ impl RandomTable {
     }
 
     pub fn roll(&self) -> String {
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         if self.total_weight == 0 {
             return "None".to_string();

@@ -1,10 +1,9 @@
 use super::{
     random_valid_points_finder, AreaStartingPosition, BuilderChain, CellularAutomataBuilder,
-    CullUnreachable, Surface, VoronoiSpawner, X, Y,
+    CullUnreachable, RandomGen, Surface, VoronoiSpawner, X, Y,
 };
 use bracket_lib::{
     prelude::{a_star_search, Algorithm2D},
-    random::RandomNumberGenerator,
     terminal::Point,
 };
 
@@ -16,7 +15,7 @@ pub fn forest_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
         .with(CullUnreachable::new())
         .with(AreaStartingPosition::new((X::Left, Y::Center)))
         .with(VoronoiSpawner::new())
-        .with(ForestRoad::new()); 
+        .with(ForestRoad::new());
 
     builder
 }
@@ -48,7 +47,7 @@ impl super::MetaMapBuilder for ForestRoad {
         }
         data.take_snapshot();
 
-        let mut rng = RandomNumberGenerator::new();
+        let mut rng = RandomGen::default();
 
         let stream_idx = if !path.steps.is_empty() {
             path.steps[path.steps.len() * 4 / 5]
