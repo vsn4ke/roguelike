@@ -8,6 +8,7 @@ use super::{
         },
         spawner,
     },
+    prefabs::Description,
     rng::RandomGen,
     BuilderMap, MetaMapBuilder,
 };
@@ -19,6 +20,8 @@ pub mod distant_exit;
 pub mod door_placement;
 pub mod nothing;
 pub mod paint;
+pub mod prefab_local;
+pub mod prefab_section;
 pub mod room_based_spawner;
 pub mod room_based_stairs;
 pub mod room_based_starting_position;
@@ -67,14 +70,14 @@ pub fn random_valid_points_finder(x: &X, y: &Y, data: &BuilderMap) -> usize {
     available_floors[0].0
 }
 
-#[allow(dead_code)]
+#[derive(Clone, Copy)]
 pub enum X {
     Left,
     Center,
     Right,
 }
 
-#[allow(dead_code)]
+#[derive(Clone, Copy)]
 pub enum Y {
     Top,
     Center,

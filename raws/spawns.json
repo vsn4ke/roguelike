@@ -549,6 +549,28 @@
     ],
     "mobs": [
         {
+            "name": "Orc Leader",
+            "renderable": {
+                "glyph": "O",
+                "fg": "#FF0000",
+                "bg": "#000000",
+                "order": 1
+            },
+            "blocks_tile": true,
+            "vision_range": 8,
+            "movement": "static",
+            "attributes": {},
+            "faction": "Cave Goblins",
+            "money": "73d20",
+            "equipped": [
+                "Battleaxe",
+                "Tower Shield",
+                "Leather Armor",
+                "Leather Boots"
+            ],
+            "level": 2
+        },
+        {
             "name": "Orc",
             "renderable": {
                 "glyph": "o",
@@ -1037,6 +1059,25 @@
         }
     ],
     "props": [
+        {
+            "name": "Watch Fire",
+            "renderable": {
+                "glyph": "☼",
+                "fg": "#FFFF55",
+                "bg": "#000000",
+                "order": 2
+            },
+            "hidden": false,
+            "light": {
+                "range": 6,
+                "color": "#FFFF55"
+            },
+            "entry_trigger": {
+                "effects": {
+                    "damage": "6"
+                }
+            }
+        },
         {
             "name": "Anvil",
             "renderable": {

@@ -1,6 +1,7 @@
 use super::{
-    get_renderable_component, spawn_position, BlocksTile, BlocksVisibility, Door, EntryTrigger,
-    Hidden, InflictsDamage, Name, RawMaster, RenderableRaw, SingleActivation, SpawnType,
+    c, get_renderable_component, mobs::LightRaw, spawn_position, BlocksTile, BlocksVisibility,
+    Door, EntryTrigger, Hidden, InflictsDamage, LightSource, Name, RawMaster, RenderableRaw,
+    SingleActivation, SpawnType, Viewshed,
 };
 use serde::Deserialize;
 use specs::prelude::*;
@@ -15,6 +16,7 @@ pub struct PropRaw {
     pub blocks_visibility: Option<bool>,
     pub door_open: Option<bool>,
     pub entry_trigger: Option<EntryTriggerRaw>,
+    pub light: Option<LightRaw>,
 }
 
 #[derive(Deserialize)]
@@ -76,6 +78,18 @@ pub fn spawn_named_prop(
                 _ => {}
             }
         }
+    }
+
+    if let Some(light) = &prop_template.light {
+        eb = eb.with(LightSource {
+            range: light.range,
+            color: c(&light.color),
+        });
+        eb = eb.with(Viewshed {
+            range: light.range,
+            dirty: true,
+            visible_tiles: Vec::new(),
+        });
     }
 
     Some(eb.build())

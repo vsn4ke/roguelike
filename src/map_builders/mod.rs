@@ -5,11 +5,12 @@ use specs::World;
 mod construct;
 mod initial;
 mod meta;
+mod prefabs;
 
-use construct::cavern::cavern_builder;
-use construct::forest::forest_builder;
-use construct::random::random_builder;
-use construct::town::town_builder;
+use construct::{
+    cavern::cavern_builder, deep_cavern::deep_cavern_builder, forest::forest_builder,
+    random::random_builder, town::town_builder,
+};
 
 pub struct BuilderMap {
     pub spawn_list: Vec<(usize, String)>,
@@ -105,6 +106,7 @@ pub fn level_builder(depth: i32, width: i32, height: i32) -> BuilderChain {
         0 => town_builder(depth, 80, 50),
         1 => forest_builder(depth, 100, 60),
         2 => cavern_builder(depth, 100, 60),
+        3 => deep_cavern_builder(depth, 80, 80),
         _ => random_builder(depth, width, height),
     }
 }

@@ -21,8 +21,8 @@ pub fn show_cheat_menu(ctx: &mut BTerm) -> CheatMenuResult {
     let y = 25 - count / 2;
 
     draw_menu(ctx, count, "Cheating!", y);
-    for (i, m) in menu.iter().enumerate() {
-        draw_menu_item(ctx, u(m.0), y + i, m.1);
+    for (i, (char, text)) in menu.iter().enumerate() {
+        draw_menu_item(ctx, *char as usize - 97, y + i, text);
     }
 
     match ctx.key {
@@ -36,8 +36,4 @@ pub fn show_cheat_menu(ctx: &mut BTerm) -> CheatMenuResult {
             _ => CheatMenuResult::NoResponse,
         },
     }
-}
-
-fn u(char: char) -> usize {
-    char as usize - 97
 }
