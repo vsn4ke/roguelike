@@ -5,7 +5,14 @@ use super::{super::colors::*, tiles::Surface, Map};
 
 pub fn get_tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
     let (glyph, mut fg, theme_bg) = match map.depth {
-        2 => get_cavern_glyph(idx, map),
+        4 => {
+            if idx as i32 % map.width < map.width /2 {
+                get_cavern_glyph(idx, map)
+            }else {
+                get_default_glyph(idx, map)
+            }
+        }
+        2|3 => get_cavern_glyph(idx, map),
         1 => get_forest_glyph(idx, map),
         _ => get_default_glyph(idx, map),
     };

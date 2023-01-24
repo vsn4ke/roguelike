@@ -1,6 +1,42 @@
 {
     "spawn_tables": [
         {
+            "name": "Dragon Wyrmling",
+            "weight": 1,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
+            "name": "Lizardman",
+            "weight": 10,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
+            "name": "Giant Lizard",
+            "weight": 4,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
+            "name": "Rock Golem",
+            "weight": 4,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
+            "name": "Stonefall Trap",
+            "weight": 4,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
+            "name": "Landmine",
+            "weight": 1,
+            "min_depth": 4,
+            "max_depth": 7
+        },
+        {
             "name": "Rat",
             "weight": 15,
             "min_depth": 1,
@@ -132,6 +168,21 @@
     ],
     "faction_tables": [
         {
+            "name": "Dwarven Remnant",
+            "responses": {
+                "Default": "attack",
+                "Player": "ignore",
+                "Dwarven Remnant": "ignore"
+            }
+        },
+        {
+            "name": "Wyrm",
+            "responses": {
+                "Default": "attack",
+                "Wyrm": "ignore"
+            }
+        },
+        {
             "name": "Player",
             "responses": {}
         },
@@ -218,6 +269,104 @@
         }
     ],
     "items": [
+        {
+            "name": "Breastplate",
+            "renderable": {
+                "glyph": "[",
+                "fg": "#00FF00",
+                "bg": "#000000",
+                "order": 2
+            },
+            "wearable": {
+                "slot": "Torso",
+                "armor_class": 3
+            },
+            "weight": 12.0,
+            "value": 100,
+            "initiative_penalty": 2.0,
+            "vendor_category": "armor"
+        },
+        {
+            "name": "Dwarf-Steel Shirt",
+            "renderable": {
+                "glyph": "[",
+                "fg": "#00FF00",
+                "bg": "#000000",
+                "order": 2
+            },
+            "wearable": {
+                "slot": "Torso",
+                "armor_class": 3
+            },
+            "weight": 5.0,
+            "value": 500,
+            "initiative_penalty": 0.0,
+            "vendor_category": "armor"
+        },
+        {
+            "name": "War Axe",
+            "renderable": {
+                "glyph": "¶",
+                "fg": "#FF55FF",
+                "bg": "#000000",
+                "order": 2
+            },
+            "weapon": {
+                "range": "melee",
+                "attribute": "might",
+                "base_damage": "1d12",
+                "hit_bonus": 0
+            },
+            "weight": 4.0,
+            "value": 100,
+            "initiative_penalty": 2,
+            "vendor_category": "weapon"
+        },
+        {
+            "name": "Dragon Scale",
+            "renderable": {
+                "glyph": "ß",
+                "fg": "#FFD700",
+                "bg": "#000000",
+                "order": 2
+            },
+            "weight": 1.0,
+            "value": 750
+        },
+        {
+            "name": "Chainmail Armor",
+            "renderable": {
+                "glyph": "[",
+                "fg": "#00FF00",
+                "bg": "#000000",
+                "order": 2
+            },
+            "wearable": {
+                "slot": "Torso",
+                "armor_class": 2
+            },
+            "weight": 8.5,
+            "value": 500,
+            "initiative_penalty": 1.0,
+            "vendor_category": "armor"
+        },
+        {
+            "name": "Chain Coif",
+            "renderable": {
+                "glyph": "[",
+                "fg": "#00FF00",
+                "bg": "#000000",
+                "order": 2
+            },
+            "wearable": {
+                "slot": "Head",
+                "armor_class": 1
+            },
+            "weight": 2.5,
+            "value": 200,
+            "initiative_penalty": 0.5,
+            "vendor_category": "armor"
+        },
         {
             "name": "Health Potion",
             "renderable": {
@@ -548,6 +697,87 @@
         }
     ],
     "mobs": [
+        {
+            "name": "Rock Golem",
+            "renderable": {
+                "glyph": "g",
+                "fg": "#AAAAAA",
+                "bg": "#000000",
+                "order": 1
+            },
+            "blocks_tile": true,
+            "vision_range": 6,
+            "movement": "random_waypoint",
+            "attributes": {},
+            "faction": "Dwarven Remnant",
+            "level": 3
+        },
+        {
+            "name": "Lizardman",
+            "renderable": {
+                "glyph": "l",
+                "fg": "#FF0000",
+                "bg": "#000000",
+                "order": 1
+            },
+            "blocks_tile": true,
+            "vision_range": 4,
+            "movement": "random_waypoint",
+            "attributes": {},
+            "faction": "Wyrm",
+            "gold": "1d12",
+            "level": 2
+        },
+        {
+            "name": "Giant Lizard",
+            "renderable": {
+                "glyph": "l",
+                "fg": "#FFFF00",
+                "bg": "#000000",
+                "order": 1
+            },
+            "blocks_tile": true,
+            "vision_range": 4,
+            "movement": "random",
+            "attributes": {},
+            "faction": "Wyrm",
+            "level": 2,
+            "loot_table": "Animal"
+        },
+        {
+            "name": "Dragon Wyrmling",
+            "renderable": {
+                "glyph": "d",
+                "fg": "#FF0000",
+                "bg": "#000000",
+                "order": 1
+            },
+            "blocks_tile": true,
+            "vision_range": 12,
+            "movement": "random_waypoint",
+            "attributes": {
+                "might": 3,
+                "fitness": 3
+            },
+            "skills": {
+                "Melee": 15,
+                "Defense": 14
+            },
+            "natural": {
+                "armor_class": 15,
+                "attacks": [
+                    {
+                        "name": "bite",
+                        "hit_bonus": 4,
+                        "damage": "1d10+2"
+                    }
+                ]
+            },
+            "loot_table": "Wyrms",
+            "faction": "Wyrm",
+            "level": 3,
+            "gold": "3d6"
+        },
         {
             "name": "Orc Leader",
             "renderable": {
@@ -1059,6 +1289,38 @@
         }
     ],
     "props": [
+        {
+            "name": "Stonefall Trap",
+            "renderable": {
+                "glyph": "^",
+                "fg": "#FF0000",
+                "bg": "#000000",
+                "order": 2
+            },
+            "hidden": true,
+            "entry_trigger": {
+                "effects": {
+                    "damage": "12",
+                    "single_activation": "1"
+                }
+            }
+        },
+        {
+            "name": "Landmine",
+            "renderable": {
+                "glyph": "^",
+                "fg": "#FF0000",
+                "bg": "#000000",
+                "order": 2
+            },
+            "hidden": true,
+            "entry_trigger": {
+                "effects": {
+                    "damage": "18",
+                    "single_activation": "1"
+                }
+            }
+        },
         {
             "name": "Watch Fire",
             "renderable": {

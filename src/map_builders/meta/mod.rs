@@ -13,6 +13,7 @@ use super::{
     BuilderMap, MetaMapBuilder,
 };
 
+pub mod area_ending_position;
 pub mod area_starting_position;
 pub mod corridor_spawner;
 pub mod cull_unreachable;

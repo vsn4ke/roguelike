@@ -8,6 +8,7 @@ use {
             voronoi::VoronoiCellBuilder,
         },
         meta::{
+            area_ending_position::AreaEndingPosition,
             area_starting_position::AreaStartingPosition,
             corridor_spawner::CorridorSpawner,
             cull_unreachable::CullUnreachable,
@@ -43,3 +44,4 @@ pub mod deep_cavern;
 pub mod forest;
 pub mod random;
 pub mod town;
+pub mod transition_cavern;
