@@ -18,7 +18,7 @@ use super::{
 pub mod random_table;
 
 pub fn spawn_in_room(map: &Map, room: &Rect, spawn_list: &mut Vec<(usize, String)>) {
-    let mut possible_targets: Vec<usize> = Vec::new();
+    let mut possible_targets = Vec::<usize>::new();
 
     for y in room.y1..room.y2 {
         for x in room.x1..room.y2 {

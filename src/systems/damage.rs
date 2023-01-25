@@ -100,7 +100,7 @@ impl<'a> System<'a> for DamageSystem {
 }
 
 pub fn delete_the_deads(ecs: &mut World) {
-    let mut dead: Vec<Entity> = Vec::new();
+    let mut dead = Vec::<Entity>::new();
 
     {
         let entities = ecs.entities();

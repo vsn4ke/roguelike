@@ -11,7 +11,7 @@ impl InitialMapBuilder for BspInteriorBuilder {
     #[allow(dead_code)]
     fn build_map(&mut self, data: &mut BuilderMap) {
         let mut rng = RandomGen::default();
-        let mut rooms: Vec<Rect> = Vec::new();
+        let mut rooms = Vec::<Rect>::new();
         self.rects.clear();
         self.rects.push(Rect::with_size(
             1,

@@ -38,7 +38,7 @@ pub fn freeze_level_entities(ecs: &mut World) {
     let player_entity = ecs.fetch::<Entity>();
     let depth = ecs.fetch::<Map>().depth;
 
-    let mut pos_to_delete: Vec<Entity> = Vec::new();
+    let mut pos_to_delete = Vec::<Entity>::new();
     for (entity, pos) in (&entities, &positions).join() {
         if entity == *player_entity {
             continue;
@@ -69,7 +69,7 @@ pub fn unfreeze_level_entities(ecs: &mut World) {
     let map = ecs.fetch::<Map>();
     let depth = map.depth;
 
-    let mut pos_to_delete: Vec<Entity> = Vec::new();
+    let mut pos_to_delete = Vec::<Entity>::new();
     for (entity, pos) in (&entities, &other_level_positions).join() {
         if entity != *player_entity && pos.depth == depth {
             positions

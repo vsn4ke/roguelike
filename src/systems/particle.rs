@@ -4,7 +4,7 @@ use bracket_terminal::FontCharType;
 use specs::prelude::*;
 
 pub fn cull_dead_particles(ecs: &mut World, ctx: &BTerm) {
-    let mut dead_particles: Vec<Entity> = Vec::new();
+    let mut dead_particles = Vec::<Entity>::new();
     {
         let mut particles = ecs.write_storage::<ParticleLifetime>();
         let entities = ecs.entities();

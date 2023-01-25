@@ -12,7 +12,7 @@ pub struct BspDungeonBuilder {
 impl InitialMapBuilder for BspDungeonBuilder {
     #[allow(dead_code)]
     fn build_map(&mut self, data: &mut super::BuilderMap) {
-        let mut rooms: Vec<Rect> = Vec::new();
+        let mut rooms = Vec::<Rect>::new();
         self.rects.clear();
         self.rects.push(Rect::with_size(
             2,

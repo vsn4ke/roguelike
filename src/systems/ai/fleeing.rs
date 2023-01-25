@@ -27,7 +27,7 @@ impl<'a> System<'a> for FleeAI {
             entities,
         ) = data;
 
-        let mut turn_done: Vec<Entity> = Vec::new();
+        let mut turn_done = Vec::<Entity>::new();
         for (entity, mut pos, flee, mut viewshed, _myturn) in (
             &entities,
             &mut positions,

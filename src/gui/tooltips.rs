@@ -68,7 +68,7 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut BTerm) {
         return;
     }
 
-    let mut tip_boxes: Vec<Tooltip> = Vec::new();
+    let mut tip_boxes = Vec::<Tooltip>::new();
     for (entity, source, position, _) in (&entities, &names, &positions, !&hidden).join() {
         if position.x == mouse_pos.x && position.y == mouse_pos.y {
             let mut tip = Tooltip::new();

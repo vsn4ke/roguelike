@@ -45,7 +45,7 @@ impl<'a> System<'a> for VisibleAI {
             }
             let my_idx = map.coord_to_index(pos.x, pos.y);
             let mut reactions: Vec<(usize, Reaction, Entity)> = Vec::new();
-            let mut flee: Vec<usize> = Vec::new();
+            let mut flee = Vec::<usize>::new();
             for visible_tile in viewshed.visible_tiles.iter() {
                 let idx = map.point2d_to_index(*visible_tile);
                 if my_idx != idx {

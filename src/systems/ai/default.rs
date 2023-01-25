@@ -29,7 +29,7 @@ impl<'a> System<'a> for DefaultMoveAI {
             entities,
         ) = data;
 
-        let mut turn_done: Vec<Entity> = Vec::new();
+        let mut turn_done = Vec::<Entity>::new();
         let mut rng = RandomGen::default();
         for (entity, mut pos, mut movement, mut viewshed, _) in (
             &entities,

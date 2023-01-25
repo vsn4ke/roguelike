@@ -34,7 +34,7 @@ pub fn try_move_player(dx: i32, dy: i32, ecs: &mut World) -> RunState {
     let mut renderables = ecs.write_storage::<Renderable>();
     let vendors = ecs.read_storage::<Vendor>();
 
-    let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
+    let mut swap_entities = Vec::<(Entity, i32, i32)>::new();
     let mut result = RunState::AwaitingInput;
     for (_, pos, viewshed, entity) in
         (&mut players, &mut positions, &mut viewsheds, &entities).join()

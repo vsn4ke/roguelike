@@ -11,7 +11,7 @@ impl InitialMapBuilder for SimpleMapBuilder {
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;
         const MAX_SIZE: i32 = 10;
-        let mut rooms: Vec<Rect> = Vec::new();
+        let mut rooms = Vec::<Rect>::new();
 
         for _ in 0..MAX_ROOMS {
             let w = rng.range(MIN_SIZE, MAX_SIZE);

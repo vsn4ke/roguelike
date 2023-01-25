@@ -81,7 +81,7 @@ impl Grid {
     }
 
     fn get_available_neighbours(&self) -> Vec<usize> {
-        let mut neighbours: Vec<usize> = Vec::new();
+        let mut neighbours = Vec::<usize>::new();
 
         let current_row = self.cells[self.current].row;
         let current_column = self.cells[self.current].column;

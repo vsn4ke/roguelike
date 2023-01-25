@@ -100,7 +100,7 @@ impl<'a> System<'a> for ItemUseSystem {
 
         for (entity, useitem) in (&entities, &wants_use).join() {
             let mut used_item = true;
-            let mut targets: Vec<Entity> = Vec::new();
+            let mut targets = Vec::<Entity>::new();
             dirty
                 .insert(entity, EquipmentChanged {})
                 .expect("Unable to insert EquipmentChanged");
@@ -140,7 +140,7 @@ impl<'a> System<'a> for ItemUseSystem {
                 let target_slot = can_equip.slot;
                 let target = targets[0];
 
-                let mut to_unequip: Vec<Entity> = Vec::new();
+                let mut to_unequip = Vec::<Entity>::new();
                 for (item_entity, already_equipped, item) in (&entities, &equipped, &names).join() {
                     if already_equipped.owner == target && already_equipped.slot == target_slot {
                         to_unequip.push(item_entity);

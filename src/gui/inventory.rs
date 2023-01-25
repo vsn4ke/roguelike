@@ -77,7 +77,7 @@ pub fn show_item_menu(
 
     draw_menu(ctx, count, text, y);
 
-    let mut equippable: Vec<Entity> = Vec::new();
+    let mut equippable = Vec::<Entity>::new();
     for (j, (entity, _, name)) in (&gs.ecs.entities(), &backpack, &names)
         .join()
         .filter(|item| item.1.owner == *player_entity)
@@ -104,7 +104,7 @@ pub fn remove_item_menu(gs: &mut State, ctx: &mut BTerm) -> (ItemMenuResult, Opt
     let mut y = 25 - (count / 2);
     draw_menu(ctx, count, "Remove Which Item?", y);
 
-    let mut equippable: Vec<Entity> = Vec::new();
+    let mut equippable = Vec::<Entity>::new();
     for (j, (entity, _, name)) in (&gs.ecs.entities(), &backpack, &names)
         .join()
         .filter(|item| item.1.owner == *player_entity)
@@ -168,7 +168,7 @@ fn vendor_sell_menu(
         y,
     );
 
-    let mut equippable: Vec<Entity> = Vec::new();
+    let mut equippable = Vec::<Entity>::new();
     for (j, (entity, _, name, item)) in (&entities, &backpack, &names, &items)
         .join()
         .filter(|item| item.1.owner == *player_entity)

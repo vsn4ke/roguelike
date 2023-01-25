@@ -30,7 +30,7 @@ impl super::MetaMapBuilder for PrefabLocalBuilder {
         for _ in 0..self.number_max_of_prefab {
             let vault_idx = rng.range(0, self.list.len());
             let vault = &self.list[vault_idx].0;
-            let mut vault_positions: Vec<Point> = Vec::new();
+            let mut vault_positions = Vec::<Point>::new();
 
             for idx in 0..data.map.tiles.len() {
                 let pt = data.map.index_to_point2d(idx);

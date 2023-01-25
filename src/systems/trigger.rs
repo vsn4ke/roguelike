@@ -38,7 +38,7 @@ impl<'a> System<'a> for TriggerSystem {
             single_activation,
         ) = data;
 
-        let mut remove_entities: Vec<Entity> = Vec::new();
+        let mut remove_entities = Vec::<Entity>::new();
         for (entity, _, pos) in (&entities, &entity_moved, &position).join() {
             let idx = map.coord_to_index(pos.x, pos.y);
             for entity_id in map.tiles[idx].content.iter() {

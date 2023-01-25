@@ -30,7 +30,7 @@ impl<'a> System<'a> for ChaseAI {
         ) = data;
 
         let mut targets: HashMap<Entity, (i32, i32)> = HashMap::new();
-        let mut end_chase: Vec<Entity> = Vec::new();
+        let mut end_chase = Vec::<Entity>::new();
         for (entity, _, chasing) in (&entities, &turns, &chasing).join() {
             let target_pos = positions.get(chasing.target);
 
@@ -46,7 +46,7 @@ impl<'a> System<'a> for ChaseAI {
         }
         end_chase.clear();
 
-        let mut turn_done: Vec<Entity> = Vec::new();
+        let mut turn_done = Vec::<Entity>::new();
         for (entity, mut pos, _chase, mut viewshed, _) in
             (&entities, &mut positions, &chasing, &mut viewsheds, &turns).join()
         {

@@ -18,8 +18,8 @@ impl<'a> System<'a> for TurnStatusSystem {
             return;
         }
 
-        let mut not_my_turn: Vec<Entity> = Vec::new();
-        let mut not_confused: Vec<Entity> = Vec::new();
+        let mut not_my_turn = Vec::<Entity>::new();
+        let mut not_confused = Vec::<Entity>::new();
 
         for (entity, _, confused) in (&entities, &mut turns, &mut confusion).join() {
             confused.duration -= 1;
