@@ -1,0 +1,222 @@
+[
+    {
+        "name": "Stonefall Trap",
+        "renderable": {
+            "glyph": "^",
+            "fg": "#FF0000",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": true,
+        "entry_trigger": {
+            "effects": {
+                "damage": "12",
+                "single_activation": "1"
+            }
+        }
+    },
+    {
+        "name": "Landmine",
+        "renderable": {
+            "glyph": "^",
+            "fg": "#FF0000",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": true,
+        "entry_trigger": {
+            "effects": {
+                "damage": "18",
+                "single_activation": "1"
+            }
+        }
+    },
+    {
+        "name": "Watch Fire",
+        "renderable": {
+            "glyph": "☼",
+            "fg": "#FFFF55",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false,
+        "light": {
+            "range": 6,
+            "color": "#FFFF55"
+        },
+        "entry_trigger": {
+            "effects": {
+                "damage": "6"
+            }
+        }
+    },
+    {
+        "name": "Anvil",
+        "renderable": {
+            "glyph": "╔",
+            "fg": "#AAAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Water Trough",
+        "renderable": {
+            "glyph": "•",
+            "fg": "#5555FF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Weapon Rack",
+        "renderable": {
+            "glyph": "π",
+            "fg": "#FFD700",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Armor Stand",
+        "renderable": {
+            "glyph": "⌠",
+            "fg": "#FFFFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Chemistry Set",
+        "renderable": {
+            "glyph": "δ",
+            "fg": "#00FFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Dead Thing",
+        "renderable": {
+            "glyph": "☻",
+            "fg": "#AA0000",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Cabinet",
+        "renderable": {
+            "glyph": "∩",
+            "fg": "#805A46",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Bed",
+        "renderable": {
+            "glyph": "8",
+            "fg": "#A05AA6",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Loom",
+        "renderable": {
+            "glyph": "≡",
+            "fg": "#805A46",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Hide Rack",
+        "renderable": {
+            "glyph": "π",
+            "fg": "#805A46",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Candle",
+        "renderable": {
+            "glyph": "Ä",
+            "fg": "#FFA500",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Keg",
+        "renderable": {
+            "glyph": "φ",
+            "fg": "#AAAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Table",
+        "renderable": {
+            "glyph": "╦",
+            "fg": "#AAAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Chair",
+        "renderable": {
+            "glyph": "└",
+            "fg": "#AAAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false
+    },
+    {
+        "name": "Bear Trap",
+        "renderable": {
+            "glyph": "^",
+            "fg": "#FF0000",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": true,
+        "entry_trigger": {
+            "effects": {
+                "damage": "6",
+                "single_activation": "1"
+            }
+        }
+    },
+    {
+        "name": "Door",
+        "renderable": {
+            "glyph": "+",
+            "fg": "#e28743",
+            "bg": "#000000",
+            "order": 2
+        },
+        "hidden": false,
+        "blocks_tile": true,
+        "blocks_visibility": true,
+        "door_open": true
+    }
+]

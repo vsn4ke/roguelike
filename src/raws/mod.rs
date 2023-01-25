@@ -6,12 +6,11 @@ pub mod props;
 pub mod rawmaster;
 pub mod spawn_table;
 
-use bracket_terminal::{embedded_resource, link_resource, EMBED};
 use lazy_static::lazy_static;
 pub use rawmaster::*;
 use serde::Deserialize;
-use serde_json;
-use std::sync::Mutex;
+use serde_json::from_reader;
+use std::{fs::File, io::BufReader, sync::Mutex};
 
 use super::{
     colors::c,
@@ -24,26 +23,27 @@ use super::{
     BlocksTile, BlocksVisibility, Entity, Hidden, Name, Position, Renderable,
 };
 
-embedded_resource!(RAW_FILE, "../../raws/spawns.json");
-
 lazy_static! {
     pub static ref RAWS: Mutex<RawMaster> = Mutex::new(RawMaster::empty());
 }
 
 pub fn load_raws() {
-    link_resource!(RAW_FILE, "../../raws/spawns.json");
+    fn open(path: &str) -> BufReader<File> {
+        let file = File::open(path).expect("File path not valid");
+        BufReader::new(file)
+    }
+    let e = "Unable to parse JSON";
 
-    let raw_data = EMBED
-        .lock()
-        .get_resource("../../raws/spawns.json".to_string())
-        .unwrap();
+    let raws = Raws {
+        items: from_reader(open("raws/items.json")).expect(e),
+        mobs: from_reader(open("raws/mobs.json")).expect(e),
+        props: from_reader(open("raws/props.json")).expect(e),
+        spawn_tables: from_reader(open("raws/table_spawn.json")).expect(e),
+        loot_tables: from_reader(open("raws/table_loot.json")).expect(e),
+        faction_tables: from_reader(open("raws/table_faction.json")).expect(e),
+    };
 
-    let raw_string =
-        std::str::from_utf8(raw_data).expect("Unable to convert to a valid UTF-8 string");
-
-    let decoder: Raws = serde_json::from_str(raw_string).expect("Unable to parse JSON");
-
-    RAWS.lock().unwrap().load(decoder);
+    RAWS.lock().unwrap().load(raws);
 }
 
 #[derive(Deserialize)]
@@ -56,7 +56,7 @@ pub struct Raws {
     pub faction_tables: Vec<factions::FactionInfoRaw>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct RenderableRaw {
     pub glyph: String,
     pub fg: String,

@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Animal",
+        "drops": [
+            {
+                "name": "Hide",
+                "weight": 10
+            },
+            {
+                "name": "Meat",
+                "weight": 10
+            },
+            {
+                "name": "",
+                "weight": 20
+            }
+        ]
+    },
+    {
+        "name": "Bandit",
+        "drops": [
+            {
+                "name": "Shortsword",
+                "weight": 10
+            },
+            {
+                "name": "",
+                "weight": 20
+            }
+        ]
+    }
+]

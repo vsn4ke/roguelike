@@ -10,7 +10,7 @@ use super::{
     WeaponAttribute, Wearable,
 };
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct ItemRaw {
     pub name: String,
     pub renderable: Option<RenderableRaw>,
@@ -23,12 +23,12 @@ pub struct ItemRaw {
     pub vendor_category: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct ConsumableRaw {
     pub effects: HashMap<String, String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct WeaponRaw {
     pub range: String,
     pub attribute: String,
@@ -36,7 +36,7 @@ pub struct WeaponRaw {
     pub hit_bonus: i32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct WearableRaw {
     pub armor_class: i32,
     pub slot: String,

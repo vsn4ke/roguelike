@@ -1,0 +1,428 @@
+[
+    {
+        "name": "Breastplate",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 3
+        },
+        "weight": 12.0,
+        "value": 100,
+        "initiative_penalty": 2.0,
+        "vendor_category": "armor"
+    },
+    {
+        "name": "Dwarf-Steel Shirt",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 3
+        },
+        "weight": 5.0,
+        "value": 500,
+        "initiative_penalty": 0.0,
+        "vendor_category": "armor"
+    },
+    {
+        "name": "War Axe",
+        "renderable": {
+            "glyph": "¶",
+            "fg": "#FF55FF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "might",
+            "base_damage": "1d12",
+            "hit_bonus": 0
+        },
+        "weight": 4.0,
+        "value": 100,
+        "initiative_penalty": 2,
+        "vendor_category": "weapon"
+    },
+    {
+        "name": "Dragon Scale",
+        "renderable": {
+            "glyph": "ß",
+            "fg": "#FFD700",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weight": 1.0,
+        "value": 750
+    },
+    {
+        "name": "Chainmail Armor",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 2
+        },
+        "weight": 8.5,
+        "value": 500,
+        "initiative_penalty": 1.0,
+        "vendor_category": "armor"
+    },
+    {
+        "name": "Chain Coif",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Head",
+            "armor_class": 1
+        },
+        "weight": 2.5,
+        "value": 200,
+        "initiative_penalty": 0.5,
+        "vendor_category": "armor"
+    },
+    {
+        "name": "Health Potion",
+        "renderable": {
+            "glyph": "!",
+            "fg": "#FF00FF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "consumable": {
+            "effects": {
+                "provides_healing": "12"
+            }
+        },
+        "weight": 0.1
+    },
+    {
+        "name": "Shortsword",
+        "renderable": {
+            "glyph": "/",
+            "fg": "#FFAAFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Might",
+            "base_damage": "1d6",
+            "hit_bonus": 0
+        },
+        "weight": 0.8
+    },
+    {
+        "name": "Leather Armor",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 1
+        },
+        "weight": 0.8
+    },
+    {
+        "name": "Leather Boots",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Feet",
+            "armor_class": 1
+        },
+        "weight": 0.6
+    },
+    {
+        "name": "Meat",
+        "renderable": {
+            "glyph": "%",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "consumable": {
+            "effects": {
+                "provides_healing": "4"
+            }
+        },
+        "weight": 0.4,
+        "vendor_category": "food",
+        "value": 20
+    },
+    {
+        "name": "Hide",
+        "renderable": {
+            "glyph": "ß",
+            "fg": "#A52A2A",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weight": 1.0,
+        "value": 100
+    },
+    {
+        "name": "Magic Missile Scroll",
+        "renderable": {
+            "glyph": ")",
+            "fg": "#00FFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "consumable": {
+            "effects": {
+                "ranged": "6",
+                "damage": "20"
+            }
+        },
+        "weight": 0.05
+    },
+    {
+        "name": "Fireball Scroll",
+        "renderable": {
+            "glyph": ")",
+            "fg": "#FFA500",
+            "bg": "#000000",
+            "order": 2
+        },
+        "consumable": {
+            "effects": {
+                "ranged": "6",
+                "damage": "20",
+                "area_of_effect": "3"
+            }
+        },
+        "weight": 0.05
+    },
+    {
+        "name": "Confusion Scroll",
+        "renderable": {
+            "glyph": ")",
+            "fg": "#FFAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "consumable": {
+            "effects": {
+                "ranged": "6",
+                "confusion": "4"
+            }
+        },
+        "weight": 0.05
+    },
+    {
+        "name": "Dagger",
+        "renderable": {
+            "glyph": "/",
+            "fg": "#FFAAAA",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Quickness",
+            "base_damage": "1d4",
+            "hit_bonus": 0
+        },
+        "weight": 0.2
+    },
+    {
+        "name": "Rusty Longsword",
+        "renderable": {
+            "glyph": "/",
+            "fg": "#BB77BB",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Might",
+            "base_damage": "1d8-1",
+            "hit_bonus": -1
+        },
+        "weight": 0.6
+    },
+    {
+        "name": "Longsword",
+        "renderable": {
+            "glyph": "/",
+            "fg": "#FFAAFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Might",
+            "base_damage": "1d8",
+            "hit_bonus": 0
+        },
+        "weight": 0.8
+    },
+    {
+        "name": "Battleaxe",
+        "renderable": {
+            "glyph": "¶",
+            "fg": "#FF55FF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Might",
+            "base_damage": "1d10+1",
+            "hit_bonus": 1
+        },
+        "weight": 1.2
+    },
+    {
+        "name": "Shield",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00AAFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Shield",
+            "armor_class": 1
+        },
+        "weight": 0.9
+    },
+    {
+        "name": "Tower Shield",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Shield",
+            "armor_class": 3
+        },
+        "weight": 2.0
+    },
+    {
+        "name": "Stained Tunic",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 1
+        },
+        "weight": 0.7
+    },
+    {
+        "name": "Torn Trousers",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Legs",
+            "armor_class": 1
+        },
+        "weight": 0.6
+    },
+    {
+        "name": "Old Boots",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#FF9999",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Feet",
+            "armor_class": 1
+        },
+        "weight": 0.5
+    },
+    {
+        "name": "Cudgel",
+        "renderable": {
+            "glyph": "/",
+            "fg": "#A52A2A",
+            "bg": "#000000",
+            "order": 2
+        },
+        "weapon": {
+            "range": "melee",
+            "attribute": "Quickness",
+            "base_damage": "1d4",
+            "hit_bonus": 0
+        },
+        "weight": 0.6
+    },
+    {
+        "name": "Cloth Tunic",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FF00",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Torso",
+            "armor_class": 0
+        },
+        "weight": 0.4
+    },
+    {
+        "name": "Cloth Pants",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#00FFFF",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Legs",
+            "armor_class": 0
+        },
+        "weight": 0.3
+    },
+    {
+        "name": "Slippers",
+        "renderable": {
+            "glyph": "[",
+            "fg": "#FF9999",
+            "bg": "#000000",
+            "order": 2
+        },
+        "wearable": {
+            "slot": "Legs",
+            "armor_class": 0
+        },
+        "weight": 0.2
+    }
+]
